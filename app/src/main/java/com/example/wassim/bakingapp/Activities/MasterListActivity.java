@@ -54,21 +54,58 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
     }
 
     @Override
-    public void onRecyclerViewInteraction(String url, String stepDescription, String thumbnailUrl) {
+    public void onRecyclerViewInteraction(String videoUrl, String stepDescription, String thumbnailUrl) {
         if (twoPaneLayout){
-            // place
+            // show step
+                // add exoplayerFragment
+            addExoplayerFragment(videoUrl,thumbnailUrl);
+                // add stepdiscription
+            addInstructionsFragment(stepDescription);
+                // add thumbnail if exists
+                //return
+
         }
         Intent intent = new Intent(this, DetailsActivity.class);
         intent.setAction("ACTION_SHOW_STEP_INSTRUCTIONS");
-        intent.putExtra("url", url);
+        intent.putExtra("videoUrl", videoUrl);
         intent.putExtra("step_description", stepDescription);
         intent.putExtra("thumbnail_url", thumbnailUrl);
         startActivity(intent);
-        Toast.makeText(this, "Test " + url, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Test " + videoUrl, Toast.LENGTH_LONG).show();
+    }
+
+    private void addInstructionsFragment(String stepDescription) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        Fragment ingredientListFragment = new IngredientsListFragment();
+        fragmentTransaction.add(R.id.flex_container, ingredientListFragment);
+
+
+//                MediaPlayerFragment mediaPlayerFragment = new MediaPlayerFragment();
+//                fragmentTransaction.add(R.id.exoplayer_container, mediaPlayerFragment);
+
+//                Fragment instructionsFragment = new InstructionsFragment();
+//                fragmentTransaction.add(R.id.step_instruction_container, instructionsFragment);
+    }
+
+    private void addExoplayerFragment(String videoUrl, String thumbnailUrl) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        MediaPlayerFragment mediaPlayerFragment = new MediaPlayerFragment();
+        fragmentTransaction.replace(R.id.flex_container, mediaPlayerFragment);
+        Bundle bundle = new Bundle();
+        bundle.putString("videoUrl", videoUrl);
+        bundle.putString("thumbnail_url", thumbnailUrl);
+        mediaPlayerFragment.setArguments(bundle);
     }
 
     @Override
     public void onIngredientCardInteraction() {
+        if (twoPaneLayout){
+            // show Ingredients
+            //return
+        }
         Recipe recipe = getIntent().getExtras().getParcelable("recipe");
         Intent intent = new Intent(this,DetailsActivity.class);
         intent.setAction("ACTION_SHOW_INGREDIENTS");

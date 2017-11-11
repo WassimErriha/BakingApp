@@ -45,7 +45,7 @@ public class DetailsActivity extends AppCompatActivity implements MasterListFrag
             fragmentTransaction.commit();
 
         } else if (passedIntent.getAction().equals("ACTION_SHOW_STEP_INSTRUCTIONS")) {
-            String videoUrl = passedIntent.getExtras().getString("url");
+            String videoUrl = passedIntent.getExtras().getString("videoUrl");
             String thumbnailUrl = passedIntent.getExtras().getString("thumbnail_url");
 
 

@@ -44,7 +44,7 @@ public class MediaPlayerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        videoUrl = getActivity().getIntent().getExtras().getString("url");
+        videoUrl = getActivity().getIntent().getExtras().getString("videoUrl");
         thumbnailUrl = getActivity().getIntent().getExtras().getString("thumbnail_url");
 
     }
