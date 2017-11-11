@@ -33,6 +33,7 @@ public class MasterListFragment extends Fragment implements StepsAdapter.OnStepI
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         Recipe recipe = getActivity().getIntent().getExtras().getParcelable("recipe");
+        ArrayList<Step> stepsArrayList = recipe.getmStepArrayList();
         View rootView  = inflater.inflate(R.layout.fragment_master_list, container, false);
 
         CardView cardView = rootView.findViewById(R.id.ingredients_card);
@@ -45,7 +46,6 @@ public class MasterListFragment extends Fragment implements StepsAdapter.OnStepI
         RecyclerView stepsRecyclerView = rootView.findViewById(R.id.master_recycler_view);
         stepsRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(),1));
         stepsRecyclerView.setHasFixedSize(true);
-        ArrayList<Step> stepsArrayList = recipe.getmStepArrayList();
         StepsAdapter stepsAdapter = new StepsAdapter(getContext(),stepsArrayList,this);
         stepsRecyclerView.setAdapter(stepsAdapter);
          return rootView;

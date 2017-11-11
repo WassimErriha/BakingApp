@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.wassim.bakingapp.R;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -27,16 +28,17 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
-public class MediaPlayerFragment extends Fragment {
+public class MediaPlayerWithInstructionsFragment extends Fragment {
 
     private SimpleExoPlayerView simpleExoPlayerView;
     private SimpleExoPlayer player;
     private static String videoUrl;
     private String thumbnailUrl;
+    String stepDescription;
 
 //    private OnFragmentInteractionListener onFragmentInteractionListener;
 
-    public MediaPlayerFragment() {
+    public MediaPlayerWithInstructionsFragment() {
         // Required empty public constructor
     }
 
@@ -46,6 +48,10 @@ public class MediaPlayerFragment extends Fragment {
 
         videoUrl = getActivity().getIntent().getExtras().getString("videoUrl");
         thumbnailUrl = getActivity().getIntent().getExtras().getString("thumbnail_url");
+        stepDescription = getActivity().getIntent().getExtras().getString("step_description");
+        //TODO pass in stepInstruction from activity
+
+
 
     }
 
@@ -55,6 +61,9 @@ public class MediaPlayerFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
+
+        TextView stepInstructionsTextView = rootView.findViewById(R.id.step_instruction_text_view);
+        stepInstructionsTextView.setText(stepDescription);
 
         Handler mainHandler = new Handler();
         BandwidthMeter bandwidthMeter1 = new DefaultBandwidthMeter();
@@ -76,6 +85,7 @@ public class MediaPlayerFragment extends Fragment {
                     .load("http://www.simplyrecipes.com/wp-content/uploads/2014/12/perfect-cheesecake-horiz-a-1200.jpg")
                     .into(exoPlayerThumbnail);
             simpleExoPlayerView.setUseController(false);
+
         }
 
         return rootView;

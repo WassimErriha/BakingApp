@@ -13,24 +13,12 @@
         android:background="@android:color/white"
         android:orientation="vertical">
 
-        <FrameLayout
-            android:id="@+id/exoplayer_container"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="centerInside" />
+        <!--this container hold mediaPlayer, and stepInstructions-->
 
         <FrameLayout
-            android:id="@+id/step_instruction_container"
+            android:id="@+id/details_container"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="centerInside" />
-
-
-        <FrameLayout
-            android:id="@+id/navigation_container"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="centerInside" />
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

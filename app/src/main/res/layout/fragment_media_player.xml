@@ -1,14 +1,25 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.wassim.bakingapp.UI.MediaPlayerFragment">
+    android:orientation="vertical"
+    tools:context="com.example.wassim.bakingapp.UI.MediaPlayerWithInstructionsFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <com.google.android.exoplayer2.ui.SimpleExoPlayerView
         android:id="@+id/exoplayer_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="300dp"
+        android:background="@android:color/black">
 
     </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
-</FrameLayout>
+
+    <TextView
+        android:id="@+id/step_instruction_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:padding="16dp"
+        tools:text="INSTRUCTIONS TEXT" />
+
+</LinearLayout>
