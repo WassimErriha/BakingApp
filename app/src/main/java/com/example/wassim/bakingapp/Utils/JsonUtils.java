@@ -15,9 +15,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-/**
- * Created by Wassim on 2017-11-06
- */
 
 public class JsonUtils {
 
