@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.example.wassim.bakingapp.R;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -46,12 +45,16 @@ public class MediaPlayerWithInstructionsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        videoUrl = getActivity().getIntent().getExtras().getString("videoUrl");
-        thumbnailUrl = getActivity().getIntent().getExtras().getString("thumbnail_url");
-        stepDescription = getActivity().getIntent().getExtras().getString("step_description");
-        //TODO pass in stepInstruction from activity
-
-
+        if (getArguments() != null){
+            videoUrl = getArguments().getString("videoUrl");
+            thumbnailUrl = getArguments().getString("thumbnail_url");
+            stepDescription = getArguments().getString("step_description");
+        }
+        else {
+            videoUrl = getActivity().getIntent().getExtras().getString("videoUrl");
+            thumbnailUrl = getActivity().getIntent().getExtras().getString("thumbnail_url");
+            stepDescription = getActivity().getIntent().getExtras().getString("step_description");
+        }
 
     }
 

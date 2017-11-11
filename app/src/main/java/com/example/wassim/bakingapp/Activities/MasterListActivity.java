@@ -17,6 +17,9 @@ import com.example.wassim.bakingapp.UI.MediaPlayerWithInstructionsFragment;
 public class MasterListActivity extends AppCompatActivity implements MasterListFragment.OnFragmentInteractionListener {
 
     boolean twoPaneLayout;
+    private FragmentManager fragmentManager;
+    private IngredientsListFragment ingredientListFragment;
+    private FragmentTransaction fragmentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +29,11 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
         if (findViewById(R.id.two_pane_activity_master_list) != null) {
             twoPaneLayout = true;
             Toast.makeText(this, " we are in tablet mode", Toast.LENGTH_LONG).show();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            Fragment ingredientListFragment = new IngredientsListFragment();
-            fragmentTransaction.add(R.id.details_container, ingredientListFragment);
+            fragmentManager = getSupportFragmentManager();
+
+            fragmentTransaction = fragmentManager.beginTransaction();
+            ingredientListFragment = new IngredientsListFragment();
+            fragmentTransaction.add(R.id.item_details_container, ingredientListFragment);
             fragmentTransaction.commit();
 
         } else {
@@ -42,9 +46,8 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
     @Override
     public void onRecyclerViewInteraction(String videoUrl, String stepDescription, String thumbnailUrl) {
         if (twoPaneLayout) {
-            //addExoplayerFragment(videoUrl, thumbnailUrl);
-            //addInstructionsFragment(stepDescription);
-            //return
+            addExoplayerFragment(videoUrl, stepDescription, thumbnailUrl);
+            return;
         }
         Intent intent = new Intent(this, DetailsActivity.class);
         intent.setAction("ACTION_SHOW_STEP_INSTRUCTIONS");
@@ -55,29 +58,31 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
         Toast.makeText(this, "Test " + videoUrl, Toast.LENGTH_LONG).show();
     }
 
-    private void addInstructionsFragment(String stepDescription) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment ingredientListFragment = new IngredientsListFragment();
-        fragmentTransaction.add(R.id.flex_container, ingredientListFragment);
-    }
+    private void addExoplayerFragment(String videoUrl, String stepDescription, String thumbnailUrl) {
 
-    private void addExoplayerFragment(String videoUrl, String thumbnailUrl) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction = fragmentManager.beginTransaction();
         MediaPlayerWithInstructionsFragment mediaPlayerWithInstructionsFragment = new MediaPlayerWithInstructionsFragment();
-        fragmentTransaction.replace(R.id.flex_container, mediaPlayerWithInstructionsFragment);
+        fragmentTransaction.replace(R.id.item_details_container, mediaPlayerWithInstructionsFragment);
+
         Bundle bundle = new Bundle();
         bundle.putString("videoUrl", videoUrl);
         bundle.putString("thumbnail_url", thumbnailUrl);
+        bundle.putString("step_description", stepDescription);
         mediaPlayerWithInstructionsFragment.setArguments(bundle);
+
+        fragmentTransaction.commit();
     }
 
     @Override
     public void onIngredientCardInteraction() {
         if (twoPaneLayout) {
             // show Ingredients
-            //return
+            fragmentTransaction = fragmentManager.beginTransaction();
+            ingredientListFragment = new IngredientsListFragment();
+            fragmentTransaction.replace(R.id.item_details_container, ingredientListFragment);
+            fragmentTransaction.commit();
+
+            return;
         }
         Recipe recipe = getIntent().getExtras().getParcelable("recipe");
         Intent intent = new Intent(this, DetailsActivity.class);
