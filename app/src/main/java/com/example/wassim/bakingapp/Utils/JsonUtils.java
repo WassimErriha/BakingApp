@@ -81,11 +81,12 @@ public class JsonUtils {
                 JSONArray stepsArray = recipe.getJSONArray("steps");
                 for (int stepIndex = 0 ; stepIndex < stepsArray.length() ; stepIndex++ ){
                     JSONObject stepObject = stepsArray.getJSONObject(stepIndex);
+                    int stepId = stepObject.getInt("id");
                     String shortDescription = stepObject.getString("description");
                     String description = stepObject.getString("shortDescription");
                     String videoUrl = stepObject.getString("videoURL");
                     String thumbnailUrl = stepObject.getString("thumbnailURL");
-                    stepArrayList.add(new Step(shortDescription,description,videoUrl,thumbnailUrl));
+                    stepArrayList.add(new Step(stepId,shortDescription,description,videoUrl,thumbnailUrl));
                 }
                 recipeArrayList.add(new Recipe(name,ingredientArrayList,stepArrayList));
             }

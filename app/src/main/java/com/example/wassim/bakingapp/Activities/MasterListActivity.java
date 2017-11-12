@@ -6,18 +6,20 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
+
 import com.example.wassim.bakingapp.Objects.Recipe;
 import com.example.wassim.bakingapp.R;
+import com.example.wassim.bakingapp.UI.DetailsFragment;
 import com.example.wassim.bakingapp.UI.IngredientsListFragment;
 import com.example.wassim.bakingapp.UI.MasterListFragment;
-import com.example.wassim.bakingapp.UI.MediaPlayerWithInstructionsFragment;
 
-public class MasterListActivity extends AppCompatActivity implements MasterListFragment.OnFragmentInteractionListener {
+public class MasterListActivity extends AppCompatActivity implements MasterListFragment.OnFragmentInteractionListener, DetailsFragment.OnFragmentInteractionListener {
 
     boolean twoPaneLayout;
     private FragmentManager fragmentManager;
     private IngredientsListFragment ingredientListFragment;
     private FragmentTransaction fragmentTransaction;
+    private Recipe recipe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,45 +40,47 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
     }
 
     @Override
-    public void onRecyclerViewInteraction(String videoUrl, String stepDescription, String thumbnailUrl) {
+    public void onRecyclerViewInteraction(int stepId) {
+        recipe = getIntent().getExtras().getParcelable("recipe");
         if (twoPaneLayout) {
             // show mediaPlayer and instructions fragment
             fragmentTransaction = fragmentManager.beginTransaction();
-            MediaPlayerWithInstructionsFragment mediaPlayerWithInstructionsFragment = new MediaPlayerWithInstructionsFragment();
-            fragmentTransaction.replace(R.id.item_details_container, mediaPlayerWithInstructionsFragment);
+            DetailsFragment detailsFragment = new DetailsFragment();
+            fragmentTransaction.replace(R.id.item_details_container, detailsFragment);
             Bundle bundle = new Bundle();
-            bundle.putString("videoUrl", videoUrl);
-            bundle.putString("thumbnail_url", thumbnailUrl);
-            bundle.putString("step_description", stepDescription);
-            mediaPlayerWithInstructionsFragment.setArguments(bundle);
+            bundle.putParcelable("recipe", recipe);
+            bundle.putInt("step_id", stepId);
+            detailsFragment.setArguments(bundle);
             fragmentTransaction.commit();
-
-            return;
+        } else {
+            Intent intent = new Intent(this, DetailsActivity.class);
+            intent.setAction("ACTION_SHOW_STEP_INSTRUCTIONS");
+            intent.putExtra("recipe", recipe);
+            intent.putExtra("step_id", stepId);
+            startActivity(intent);
+            Toast.makeText(this, "Test " + stepId, Toast.LENGTH_LONG).show();
         }
-        Intent intent = new Intent(this, DetailsActivity.class);
-        intent.setAction("ACTION_SHOW_STEP_INSTRUCTIONS");
-        intent.putExtra("videoUrl", videoUrl);
-        intent.putExtra("step_description", stepDescription);
-        intent.putExtra("thumbnail_url", thumbnailUrl);
-        startActivity(intent);
-        Toast.makeText(this, "Test " + videoUrl, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onIngredientCardInteraction() {
+        recipe = getIntent().getExtras().getParcelable("recipe");
         if (twoPaneLayout) {
             // show Ingredients fragment
             fragmentTransaction = fragmentManager.beginTransaction();
             ingredientListFragment = new IngredientsListFragment();
             fragmentTransaction.replace(R.id.item_details_container, ingredientListFragment);
             fragmentTransaction.commit();
-
-            return;
+        } else {
+            Intent intent = new Intent(this, DetailsActivity.class);
+            intent.setAction("ACTION_SHOW_INGREDIENTS");
+            intent.putExtra("recipe", recipe);
+            startActivity(intent);
         }
-        Recipe recipe = getIntent().getExtras().getParcelable("recipe");
-        Intent intent = new Intent(this, DetailsActivity.class);
-        intent.setAction("ACTION_SHOW_INGREDIENTS");
-        intent.putExtra("recipe", recipe);
-        startActivity(intent);
+    }
+
+    @Override
+    public void onNavigationButtonsInteraction(int navigationButtonId, int currentPosition) {
+
     }
 }

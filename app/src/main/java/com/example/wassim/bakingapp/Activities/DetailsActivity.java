@@ -7,14 +7,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import com.example.wassim.bakingapp.Objects.Recipe;
 import com.example.wassim.bakingapp.R;
+import com.example.wassim.bakingapp.UI.DetailsFragment;
 import com.example.wassim.bakingapp.UI.IngredientsListFragment;
-import com.example.wassim.bakingapp.UI.MasterListFragment;
-import com.example.wassim.bakingapp.UI.MediaPlayerWithInstructionsFragment;
 
-public class DetailsActivity extends AppCompatActivity implements MasterListFragment.OnFragmentInteractionListener {
+public class DetailsActivity extends AppCompatActivity implements DetailsFragment.OnFragmentInteractionListener {
 
-    private MediaPlayerWithInstructionsFragment mediaPlayerWithInstructionsFragment;
+    private DetailsFragment detailsFragment;
     private FragmentManager fragmentManager;
 
     @Override
@@ -32,21 +32,31 @@ public class DetailsActivity extends AppCompatActivity implements MasterListFrag
             fragmentTransaction.commit();
 
         } else if (passedIntent.getAction().equals("ACTION_SHOW_STEP_INSTRUCTIONS")) {
-                fragmentManager = getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                mediaPlayerWithInstructionsFragment = new MediaPlayerWithInstructionsFragment();
-                fragmentTransaction.add(R.id.details_container, mediaPlayerWithInstructionsFragment);
-                fragmentTransaction.commit();
+            fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            detailsFragment = new DetailsFragment();
+            fragmentTransaction.add(R.id.details_container, detailsFragment);
+            fragmentTransaction.commit();
         }
     }
 
     @Override
-    public void onRecyclerViewInteraction(String url, String stepDescription, String thumbnailUrl) {
+    public void onNavigationButtonsInteraction(int navigationButtonId, int currentPosition) {
 
-    }
+        Recipe recipe = getIntent().getExtras().getParcelable("recipe");
 
-    @Override
-    public void onIngredientCardInteraction() {
+        int futurePosition;
+        if (navigationButtonId == 1) futurePosition = currentPosition + 1;
+        else futurePosition = currentPosition - 1;
 
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        detailsFragment = new DetailsFragment();
+        fragmentTransaction.replace(R.id.details_container, detailsFragment);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("recipe", recipe);
+        bundle.putInt("step_id", futurePosition);
+        detailsFragment.setArguments(bundle);
+        fragmentTransaction.commit();
     }
 }

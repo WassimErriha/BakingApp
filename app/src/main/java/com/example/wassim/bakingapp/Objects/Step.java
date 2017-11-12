@@ -7,19 +7,25 @@ import android.os.Parcelable;
  * Created by Wassim on 2017-11-06
  */
 
-public class Step implements Parcelable{
+public class Step implements Parcelable {
 
+    int stepId;
     String shortDiscription;
     String description;
     String videoUrl;
     String thumbnailUrl;
 
-    public Step(String shortDescription, String description, String videoUrl, String thumbnailUrl) {
+    public Step(int stepId, String shortDescription, String description, String videoUrl, String thumbnailUrl) {
 
+        this.stepId = stepId;
         this.shortDiscription = shortDescription;
         this.description = description;
         this.videoUrl = videoUrl;
         this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public int getStepId() {
+        return stepId;
     }
 
     public String getShortDiscription() {
@@ -41,12 +47,14 @@ public class Step implements Parcelable{
     @Override
     public String toString() {
         return "Step{" +
-                "\n shortDiscription='" + shortDiscription + '\'' +
-                "\n, description='" + description + '\'' +
-                "\n, videoUrl='" + videoUrl + '\'' +
-                "\n thumbnailUrl='" + thumbnailUrl + '\'' +
+                "stepId=" + stepId +
+                ", shortDiscription='" + shortDiscription + '\'' +
+                ", description='" + description + '\'' +
+                ", videoUrl='" + videoUrl + '\'' +
+                ", thumbnailUrl='" + thumbnailUrl + '\'' +
                 '}';
     }
+
 
     @Override
     public int describeContents() {
@@ -55,6 +63,7 @@ public class Step implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.stepId);
         dest.writeString(this.shortDiscription);
         dest.writeString(this.description);
         dest.writeString(this.videoUrl);
@@ -62,6 +71,7 @@ public class Step implements Parcelable{
     }
 
     protected Step(Parcel in) {
+        this.stepId = in.readInt();
         this.shortDiscription = in.readString();
         this.description = in.readString();
         this.videoUrl = in.readString();

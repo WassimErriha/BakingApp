@@ -1,5 +1,6 @@
 package com.example.wassim.bakingapp.UI;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,8 +8,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.wassim.bakingapp.Objects.Recipe;
+import com.example.wassim.bakingapp.Objects.Step;
 import com.example.wassim.bakingapp.R;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -27,7 +32,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
-public class MediaPlayerWithInstructionsFragment extends Fragment {
+public class DetailsFragment extends Fragment {
 
     private SimpleExoPlayerView simpleExoPlayerView;
     private SimpleExoPlayer player;
@@ -35,27 +40,40 @@ public class MediaPlayerWithInstructionsFragment extends Fragment {
     private String thumbnailUrl;
     String stepDescription;
 
-//    private OnFragmentInteractionListener onFragmentInteractionListener;
+    private OnFragmentInteractionListener onFragmentInteractionListener;
+    private int stepId;
+    private Recipe recipe;
+    private Step step;
+    private Button previousButton;
+    private Button nextButton;
 
-    public MediaPlayerWithInstructionsFragment() {
+    public DetailsFragment() {
         // Required empty public constructor
     }
+
+    public interface OnFragmentInteractionListener {
+        void onNavigationButtonsInteraction(int navigationButtonId, int currentPosition);
+    }
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null){
-            videoUrl = getArguments().getString("videoUrl");
-            thumbnailUrl = getArguments().getString("thumbnail_url");
-            stepDescription = getArguments().getString("step_description");
+            recipe = getArguments().getParcelable("recipe");
+            stepId = getArguments().getInt("step_id");
         }
+        // intent
         else {
-            videoUrl = getActivity().getIntent().getExtras().getString("videoUrl");
-            thumbnailUrl = getActivity().getIntent().getExtras().getString("thumbnail_url");
-            stepDescription = getActivity().getIntent().getExtras().getString("step_description");
+            recipe = getActivity().getIntent().getExtras().getParcelable("recipe");
+            stepId = getActivity().getIntent().getExtras().getInt("step_id");
         }
-
+        step = recipe.getmStepArrayList().get(stepId);
+        videoUrl = step.getVideoUrl();
+        thumbnailUrl = step.getThumbnailUrl();
+        stepDescription = step.getShortDiscription();
     }
 
     @Override
@@ -63,10 +81,26 @@ public class MediaPlayerWithInstructionsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_details, container, false);
 
         TextView stepInstructionsTextView = rootView.findViewById(R.id.step_instruction_text_view);
         stepInstructionsTextView.setText(stepDescription);
+
+        nextButton  = rootView.findViewById(R.id.next_recipe_button);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onFragmentInteractionListener.onNavigationButtonsInteraction(1, stepId);
+            }
+        });
+
+        previousButton  = rootView.findViewById(R.id.previous_recipe_button);
+        previousButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onFragmentInteractionListener.onNavigationButtonsInteraction(0, stepId);
+            }
+        });
 
         Handler mainHandler = new Handler();
         BandwidthMeter bandwidthMeter1 = new DefaultBandwidthMeter();
@@ -94,44 +128,51 @@ public class MediaPlayerWithInstructionsFragment extends Fragment {
         return rootView;
     }
 
-//    public void onButtonPressed(Uri uri) {
-//        if (onFragmentInteractionListener != null) {
-//            onFragmentInteractionListener.onRecyclerViewInteraction(uri);
-//        }
-//    }
-//
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            onFragmentInteractionListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        onFragmentInteractionListener = null;
-//    }
-//
-//    /**
-//     * This interface must be implemented by activities that contain this
-//     * fragment to allow an interaction in this fragment to be communicated
-//     * to the activity and potentially other fragments contained in that
-//     * activity.
-//     * <p>
-//     * See the Android Training lesson <a href=
-//     * "http://developer.android.com/training/basics/fragments/communicating.html"
-//     * >Communicating with Other Fragments</a> for more information.
-//     */
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onRecyclerViewInteraction(Uri uri);
-//    }
+    @Override
+    public void onStart() {
+        // get size of array to remove next button when user gets to the end of the array
+        int endOfArray = (recipe.getmStepArrayList().size() - 1);
+        super.onStart();
+        if (stepId == 0){
+            previousButton.setVisibility(View.GONE);
+        }
+        else if (stepId == endOfArray){
+            nextButton.setVisibility(View.GONE);
+        }
+        // if in tablet mode, remove navigation buttons
+        if (getActivity().findViewById(R.id.two_pane_activity_master_list) != null){
+            previousButton.setVisibility(View.GONE);
+            nextButton.setVisibility(View.GONE);
+        }
+    }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            onFragmentInteractionListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        onFragmentInteractionListener = null;
+    }
+
+ /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
 
     @Override
     public void onDestroy() {

@@ -8,13 +8,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.wassim.bakingapp.Objects.Step;
 import com.example.wassim.bakingapp.R;
+
 import java.util.ArrayList;
 
 /**
  * Created by Wassim on 2017-11-07
  */
 
-public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> {
+public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder>  {
 
     private Context mContext;
     private ArrayList<Step> steps;
@@ -22,7 +23,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
 
 
     public interface OnStepInstructionClickListener {
-        void onStepClick(String videoUrl, String stepDescription, String thumbnailUrl);
+        void onStepClick(int stepId);
     }
 
     public StepsAdapter(Context context, ArrayList<Step> data, OnStepInstructionClickListener clickListener ) {
@@ -50,7 +51,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
         return steps.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements  View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements  View.OnClickListener{
 
         TextView stepTextView;
 
@@ -62,12 +63,14 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
 
         @Override
         public void onClick(View view) {
+            view.setBackgroundColor(mContext.getResources().getColor(R.color.cardview_dark_background));
             int position = getAdapterPosition();
             Step step = steps.get(position);
-            String videoUrl = step.getVideoUrl();
-            String stepDescription = step.getShortDiscription();
-            String thumbnailUrl = step.getThumbnailUrl();
-            onStepInstructionClickListener.onStepClick(videoUrl,stepDescription,thumbnailUrl);
+//            String videoUrl = step.getVideoUrl();
+//            String stepDescription = step.getShortDiscription();
+//            String thumbnailUrl = step.getThumbnailUrl();
+            int stepId = step.getStepId();
+            onStepInstructionClickListener.onStepClick(stepId);
         }
     }
 
