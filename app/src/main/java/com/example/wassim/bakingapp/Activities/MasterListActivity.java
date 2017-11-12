@@ -83,4 +83,9 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
     public void onNavigationButtonsInteraction(int navigationButtonId, int currentPosition) {
 
     }
+    @Override
+    public boolean onNavigateUp() {
+        onBackPressed();
+        return super.onNavigateUp();
+    }
 }
