@@ -144,6 +144,10 @@ public class DetailsFragment extends Fragment {
             previousButton.setVisibility(View.GONE);
             nextButton.setVisibility(View.GONE);
         }
+        if (videoUrl.isEmpty() && thumbnailUrl.isEmpty()){
+            simpleExoPlayerView.setVisibility(View.GONE);
+        }
+
     }
 
     @Override

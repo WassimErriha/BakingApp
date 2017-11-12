@@ -66,11 +66,10 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
             view.setBackgroundColor(mContext.getResources().getColor(R.color.cardview_dark_background));
             int position = getAdapterPosition();
             Step step = steps.get(position);
-//            String videoUrl = step.getVideoUrl();
-//            String stepDescription = step.getShortDiscription();
-//            String thumbnailUrl = step.getThumbnailUrl();
             int stepId = step.getStepId();
-            onStepInstructionClickListener.onStepClick(stepId);
+            // return step position instead of step id to avoid out of bound exception
+            // the array may be missing a step.
+            onStepInstructionClickListener.onStepClick(position);
         }
     }
 
