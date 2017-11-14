@@ -5,7 +5,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -46,6 +44,8 @@ public class DetailsFragment extends Fragment {
     private Step step;
     private Button previousButton;
     private Button nextButton;
+    private ExtractorMediaSource mediaSource;
+    private Handler mainHandler;
 
     public DetailsFragment() {
         // Required empty public constructor
@@ -72,16 +72,15 @@ public class DetailsFragment extends Fragment {
         stepDescription = step.getShortDiscription();
 
 
-        Handler mainHandler = new Handler();
+        mainHandler = new Handler();
         BandwidthMeter bandwidthMeter1 = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter1);
-
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getActivity(), Util.getUserAgent(getActivity(), "com.example.wassim.bakingapp"), new DefaultBandwidthMeter());
-        MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(videoUrl), dataSourceFactory, new DefaultExtractorsFactory(), mainHandler, null);
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getActivity(), Util.getUserAgent(getActivity(), "BakingApp"), new DefaultBandwidthMeter());
+        mediaSource = new ExtractorMediaSource(Uri.parse(videoUrl), dataSourceFactory, new DefaultExtractorsFactory(), mainHandler, null);
         player = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
         player.prepare(mediaSource);
-
+        player.setPlayWhenReady(true);
 
     }
 
@@ -98,7 +97,6 @@ public class DetailsFragment extends Fragment {
         simpleExoPlayerView = rootView.findViewById(R.id.exoplayer_view);
         simpleExoPlayerView.requestFocus();
         simpleExoPlayerView.setPlayer(player);
-        player.setPlayWhenReady(true);
 
         nextButton = rootView.findViewById(R.id.next_recipe_button);
         nextButton.setOnClickListener(new View.OnClickListener() {
@@ -170,18 +168,17 @@ public class DetailsFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        player.setPlayWhenReady(false);
+        // do not pause player after configuration change
+        if (!getActivity().isChangingConfigurations()) {
+            player.setPlayWhenReady(false);
+        }
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        if (getActivity().isChangingConfigurations()) {
-            Log.i(getTag(), "configuration is changing: keep playing");
-        } else {
-            player.stop();
-            player.release();
-        }
+    public void onDestroy() {
+        super.onDestroy();
+        player.stop();
+        player.release();
     }
 
     public interface OnFragmentInteractionListener {
