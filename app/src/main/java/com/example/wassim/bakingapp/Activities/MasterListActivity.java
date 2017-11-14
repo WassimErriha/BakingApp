@@ -33,10 +33,6 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
         if (findViewById(R.id.two_pane_activity_master_list) != null) {
             twoPaneLayout = true;
             fragmentManager = getFragmentManager();
-
-            //Fragment containerFragment3 = fragmentManager.findFragmentById(R.id.item_details_container);
-
-
             ingredientListFragment = (IngredientsListFragment) fragmentManager.findFragmentByTag(INGREDIENTS_LIST_FRAGMENT_TAG);
             detailsFragment = (DetailsFragment) fragmentManager.findFragmentByTag(STEP_DETAILS_FRAGMENT_TAG);
             // if ingredientListFragment && detailsFragment
@@ -46,7 +42,6 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
                 fragmentTransaction.add(R.id.item_details_container, ingredientListFragment, INGREDIENTS_LIST_FRAGMENT_TAG);
                 fragmentTransaction.commit();
             }
-
         } else {
             twoPaneLayout = false;
         }
@@ -55,9 +50,7 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
     @Override
     public void onRecyclerViewInteraction(int stepId) {
 
-        if (getIntent() != null) {
-            recipe = getIntent().getExtras().getParcelable("recipe");
-        }
+        if (getIntent() != null) recipe = getIntent().getExtras().getParcelable("recipe");
 
         if (twoPaneLayout) {
             // show mediaPlayer and instructions fragment
