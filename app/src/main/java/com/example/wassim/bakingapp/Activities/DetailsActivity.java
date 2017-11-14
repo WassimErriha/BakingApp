@@ -1,21 +1,22 @@
 package com.example.wassim.bakingapp.Activities;
 
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 
 import com.example.wassim.bakingapp.Objects.Recipe;
 import com.example.wassim.bakingapp.R;
 import com.example.wassim.bakingapp.UI.DetailsFragment;
 import com.example.wassim.bakingapp.UI.IngredientsListFragment;
 
-public class DetailsActivity extends FragmentActivity implements DetailsFragment.OnFragmentInteractionListener {
+public class DetailsActivity extends Activity implements DetailsFragment.OnFragmentInteractionListener {
 
-    private android.app.Fragment detailsFragment;
-    private android.app.FragmentManager fragmentManager;
+    private Fragment detailsFragment;
+    private FragmentManager fragmentManager;
     private IngredientsListFragment ingredientListFragment;
 
     @Override
@@ -24,20 +25,9 @@ public class DetailsActivity extends FragmentActivity implements DetailsFragment
         setContentView(R.layout.activity_details);
 
         fragmentManager = getFragmentManager();
-        //fragment_details
-        Fragment containerFragment = fragmentManager.findFragmentById(R.id.item_details_container);
-        Fragment containerFragme = fragmentManager.findFragmentById(R.id.fragment_details_id);
-        Fragment conerFragme = fragmentManager.findFragmentById(R.id.item_details_container);
-        Fragment conragme = fragmentManager.findFragmentById(R.id.item_details_container);
-        //if (containerFragment != null){
-        //FragmentManager childFragmentManager = containerFragment.getChildFragmentManager();
-        //detailsFragment = childFragmentManager.findFragmentById(R.id.fragment_details_id);
-        //detailsFragment = childFragmentManager.findFragmentByTag("fragment_details");
-        //detailsFragment = childFragmentManager.findFragmentByTag("DetailsFragment");
-        // }
 
-        //detailsFragment = fragmentManager.findFragmentByTag("fragment_details");
-        //fragmentManager.findFragmentByTag("fragment_details") == null
+        Fragment containerFragment = fragmentManager.findFragmentById(R.id.details_container);
+
         if (containerFragment == null) {
             Intent passedIntent = getIntent();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -45,15 +35,12 @@ public class DetailsActivity extends FragmentActivity implements DetailsFragment
                 ingredientListFragment = new IngredientsListFragment();
                 fragmentTransaction.add(R.id.details_container, ingredientListFragment);
                 fragmentTransaction.commit();
-
             } else if (passedIntent.getAction().equals("ACTION_SHOW_STEP_INSTRUCTIONS")) {
                 detailsFragment = new DetailsFragment();
                 fragmentTransaction.add(R.id.details_container, detailsFragment);
                 fragmentTransaction.commit();
             }
         }
-
-
     }
 
     @Override

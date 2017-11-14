@@ -1,6 +1,5 @@
 package com.example.wassim.bakingapp.Activities;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -22,6 +21,8 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
     private FragmentTransaction fragmentTransaction;
     private Recipe recipe;
     private DetailsFragment detailsFragment;
+    private String INGREDIENTS_LIST_FRAGMENT_TAG = "ingredients_list_tag";
+    private String STEP_DETAILS_FRAGMENT_TAG = "step_details_tag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,14 +33,17 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
         if (findViewById(R.id.two_pane_activity_master_list) != null) {
             twoPaneLayout = true;
             fragmentManager = getFragmentManager();
-            //Fragment containerFragment = fragmentManager.findFragmentByTag("fragment_details");
-            //Fragment containerFragment2 = fragmentManager.findFragmentById(R.id.fragment_details_id);
-            //Fragment containerFragment3 = fragmentManager.findFragmentByTag("fragment_details");
-            Fragment containerFragment4 = fragmentManager.findFragmentById(R.id.item_details_container);
-            if (containerFragment4 == null) {
+
+            //Fragment containerFragment3 = fragmentManager.findFragmentById(R.id.item_details_container);
+
+
+            ingredientListFragment = (IngredientsListFragment) fragmentManager.findFragmentByTag(INGREDIENTS_LIST_FRAGMENT_TAG);
+            detailsFragment = (DetailsFragment) fragmentManager.findFragmentByTag(STEP_DETAILS_FRAGMENT_TAG);
+            // if ingredientListFragment && detailsFragment
+            if (ingredientListFragment == null && detailsFragment == null) {
                 fragmentTransaction = fragmentManager.beginTransaction();
                 ingredientListFragment = new IngredientsListFragment();
-                fragmentTransaction.add(R.id.item_details_container, ingredientListFragment);
+                fragmentTransaction.add(R.id.item_details_container, ingredientListFragment, INGREDIENTS_LIST_FRAGMENT_TAG);
                 fragmentTransaction.commit();
             }
 
@@ -59,7 +63,7 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
             // show mediaPlayer and instructions fragment
             fragmentTransaction = fragmentManager.beginTransaction();
             detailsFragment = new DetailsFragment();
-            fragmentTransaction.replace(R.id.item_details_container, detailsFragment);
+            fragmentTransaction.replace(R.id.item_details_container, detailsFragment, STEP_DETAILS_FRAGMENT_TAG);
             Bundle bundle = new Bundle();
             bundle.putParcelable("recipe", recipe);
             bundle.putInt("step_id", stepId);
@@ -82,7 +86,7 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
             // show Ingredients fragment
             fragmentTransaction = fragmentManager.beginTransaction();
             ingredientListFragment = new IngredientsListFragment();
-            fragmentTransaction.replace(R.id.item_details_container, ingredientListFragment);
+            fragmentTransaction.replace(R.id.item_details_container, ingredientListFragment, INGREDIENTS_LIST_FRAGMENT_TAG);
             fragmentTransaction.commit();
         } else {
             Intent intent = new Intent(this, DetailsActivity.class);
