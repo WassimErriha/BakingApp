@@ -1,43 +1,59 @@
 package com.example.wassim.bakingapp.Activities;
 
+
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 
 import com.example.wassim.bakingapp.Objects.Recipe;
 import com.example.wassim.bakingapp.R;
 import com.example.wassim.bakingapp.UI.DetailsFragment;
 import com.example.wassim.bakingapp.UI.IngredientsListFragment;
 
-public class DetailsActivity extends AppCompatActivity implements DetailsFragment.OnFragmentInteractionListener {
+public class DetailsActivity extends FragmentActivity implements DetailsFragment.OnFragmentInteractionListener {
 
-    private DetailsFragment detailsFragment;
-    private FragmentManager fragmentManager;
+    private android.app.Fragment detailsFragment;
+    private android.app.FragmentManager fragmentManager;
+    private IngredientsListFragment ingredientListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        Intent passedIntent = getIntent();
+        fragmentManager = getFragmentManager();
+        //fragment_details
+        Fragment containerFragment = fragmentManager.findFragmentById(R.id.item_details_container);
+        Fragment containerFragme = fragmentManager.findFragmentById(R.id.fragment_details_id);
+        Fragment conerFragme = fragmentManager.findFragmentById(R.id.item_details_container);
+        Fragment conragme = fragmentManager.findFragmentById(R.id.item_details_container);
+        //if (containerFragment != null){
+        //FragmentManager childFragmentManager = containerFragment.getChildFragmentManager();
+        //detailsFragment = childFragmentManager.findFragmentById(R.id.fragment_details_id);
+        //detailsFragment = childFragmentManager.findFragmentByTag("fragment_details");
+        //detailsFragment = childFragmentManager.findFragmentByTag("DetailsFragment");
+        // }
 
-        if (passedIntent.getAction().equals("ACTION_SHOW_INGREDIENTS")) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
+        //detailsFragment = fragmentManager.findFragmentByTag("fragment_details");
+        //fragmentManager.findFragmentByTag("fragment_details") == null
+        if (containerFragment == null) {
+            Intent passedIntent = getIntent();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            Fragment ingredientListFragment = new IngredientsListFragment();
-            fragmentTransaction.add(R.id.details_container, ingredientListFragment);
-            fragmentTransaction.commit();
+            if (passedIntent.getAction().equals("ACTION_SHOW_INGREDIENTS")) {
+                ingredientListFragment = new IngredientsListFragment();
+                fragmentTransaction.add(R.id.details_container, ingredientListFragment);
+                fragmentTransaction.commit();
 
-        } else if (passedIntent.getAction().equals("ACTION_SHOW_STEP_INSTRUCTIONS")) {
-            fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            detailsFragment = new DetailsFragment();
-            fragmentTransaction.add(R.id.details_container, detailsFragment);
-            fragmentTransaction.commit();
+            } else if (passedIntent.getAction().equals("ACTION_SHOW_STEP_INSTRUCTIONS")) {
+                detailsFragment = new DetailsFragment();
+                fragmentTransaction.add(R.id.details_container, detailsFragment);
+                fragmentTransaction.commit();
+            }
         }
+
+
     }
 
     @Override
@@ -49,7 +65,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsFragmen
         if (navigationButtonId == 1) futurePosition = currentPosition + 1;
         else futurePosition = currentPosition - 1;
 
-        fragmentManager = getSupportFragmentManager();
+        fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         detailsFragment = new DetailsFragment();
         fragmentTransaction.replace(R.id.details_container, detailsFragment);

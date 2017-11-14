@@ -1,9 +1,10 @@
 package com.example.wassim.bakingapp.Activities;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
@@ -20,20 +21,28 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
     private IngredientsListFragment ingredientListFragment;
     private FragmentTransaction fragmentTransaction;
     private Recipe recipe;
+    private DetailsFragment detailsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master_list);
 
+
         if (findViewById(R.id.two_pane_activity_master_list) != null) {
             twoPaneLayout = true;
-            // show Ingredients fragment
-            fragmentManager = getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-            ingredientListFragment = new IngredientsListFragment();
-            fragmentTransaction.add(R.id.item_details_container, ingredientListFragment);
-            fragmentTransaction.commit();
+            fragmentManager = getFragmentManager();
+            //Fragment containerFragment = fragmentManager.findFragmentByTag("fragment_details");
+            //Fragment containerFragment2 = fragmentManager.findFragmentById(R.id.fragment_details_id);
+            //Fragment containerFragment3 = fragmentManager.findFragmentByTag("fragment_details");
+            Fragment containerFragment4 = fragmentManager.findFragmentById(R.id.item_details_container);
+            if (containerFragment4 == null) {
+                fragmentTransaction = fragmentManager.beginTransaction();
+                ingredientListFragment = new IngredientsListFragment();
+                fragmentTransaction.add(R.id.item_details_container, ingredientListFragment);
+                fragmentTransaction.commit();
+            }
+
         } else {
             twoPaneLayout = false;
         }
@@ -41,11 +50,15 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
 
     @Override
     public void onRecyclerViewInteraction(int stepId) {
-        recipe = getIntent().getExtras().getParcelable("recipe");
+
+        if (getIntent() != null) {
+            recipe = getIntent().getExtras().getParcelable("recipe");
+        }
+
         if (twoPaneLayout) {
             // show mediaPlayer and instructions fragment
             fragmentTransaction = fragmentManager.beginTransaction();
-            DetailsFragment detailsFragment = new DetailsFragment();
+            detailsFragment = new DetailsFragment();
             fragmentTransaction.replace(R.id.item_details_container, detailsFragment);
             Bundle bundle = new Bundle();
             bundle.putParcelable("recipe", recipe);
@@ -81,8 +94,9 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
 
     @Override
     public void onNavigationButtonsInteraction(int navigationButtonId, int currentPosition) {
-
+        // not used in twoPaneLayout
     }
+
     @Override
     public boolean onNavigateUp() {
         onBackPressed();

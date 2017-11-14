@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.wassim.bakingapp">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -19,9 +20,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activities.MasterListActivity"
-            android:parentActivityName=".Activities.MainActivity"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop"
+            android:parentActivityName=".Activities.MainActivity" />
         <activity android:name=".Activities.DetailsActivity"
+
+            android:launchMode="singleTop"
             android:parentActivityName=".Activities.MasterListActivity"/>
     </application>
 
