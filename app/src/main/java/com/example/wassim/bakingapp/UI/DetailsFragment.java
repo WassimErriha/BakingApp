@@ -81,7 +81,6 @@ public class DetailsFragment extends Fragment {
         player = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
         player.prepare(mediaSource);
         player.setPlayWhenReady(true);
-
     }
 
     @Override

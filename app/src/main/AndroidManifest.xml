@@ -19,13 +19,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.MasterListActivity"
+        <activity
+            android:name=".Activities.MasterListActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".Activities.MainActivity" />
-        <activity android:name=".Activities.DetailsActivity"
-
+        <activity
+            android:name=".Activities.DetailsActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".Activities.MasterListActivity"/>
+            android:parentActivityName=".Activities.MasterListActivity" />
+
+        <receiver android:name=".NewAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/new_app_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".WidgetRmoteViewService"
+            android:enabled="true"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <activity android:name=".WidgetIngredientsActivity"></activity>
     </application>
 
 </manifest>
