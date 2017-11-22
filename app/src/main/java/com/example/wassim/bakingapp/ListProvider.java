@@ -38,15 +38,11 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public RemoteViews getViewAt(int position) {
         final RemoteViews remoteView = new RemoteViews(context.getPackageName(), R.layout.row);
-//        String recipe = mRecipes.get(position);
-//        remoteView.setTextViewText(R.id.heading,recipe);
         Recipe recipe = mRecipes.get(position);
         remoteView.setTextViewText(R.id.heading, recipe.getmName());
         Intent intent = new Intent(context, WidgetIngredientsActivity.class);
         intent.putExtra("recipe", recipe);
-        //PendingIntent pendingIntent = PendingIntent.getActivity(context,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
         remoteView.setOnClickFillInIntent(R.id.widget_item, intent);
-        //remoteView.setTextViewText(R.id.content, listItem.content);
         return remoteView;
     }
 

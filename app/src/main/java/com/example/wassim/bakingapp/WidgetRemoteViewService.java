@@ -3,7 +3,7 @@ package com.example.wassim.bakingapp;
 import android.content.Intent;
 import android.widget.RemoteViewsService;
 
-public class WidgetRmoteViewService extends RemoteViewsService {
+public class WidgetRemoteViewService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {

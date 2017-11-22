@@ -39,7 +39,7 @@ public class NewAppWidget extends AppWidgetProvider {
                 context.getPackageName(), R.layout.new_app_widget);
 
         //RemoteViews Service needed to provide adapter for ListView
-        Intent svcIntent = new Intent(context, WidgetRmoteViewService.class);
+        Intent svcIntent = new Intent(context, WidgetRemoteViewService.class);
         //passing app widget id to that RemoteViews Service
         svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         //setting a unique Uri to the intent
