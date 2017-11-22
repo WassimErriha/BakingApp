@@ -5,6 +5,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +16,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.wassim.bakingapp.Activities.MainActivity;
 import com.example.wassim.bakingapp.Objects.Recipe;
 import com.example.wassim.bakingapp.Objects.Step;
 import com.example.wassim.bakingapp.R;
+import com.example.wassim.bakingapp.SimpleIdlingResource;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -46,6 +52,10 @@ public class DetailsFragment extends Fragment {
     private Button nextButton;
     private ExtractorMediaSource mediaSource;
     private Handler mainHandler;
+    // The Idling Resource which will be null in production.
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
+
 
     public DetailsFragment() {
         // Required empty public constructor
@@ -56,6 +66,7 @@ public class DetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
+        mIdlingResource = (SimpleIdlingResource) MainActivity.getIdlingResource();
 
         if (getArguments() != null) {
             recipe = getArguments().getParcelable("recipe");
@@ -73,6 +84,9 @@ public class DetailsFragment extends Fragment {
 
 
         mainHandler = new Handler();
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
         BandwidthMeter bandwidthMeter1 = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter1);
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
@@ -144,7 +158,9 @@ public class DetailsFragment extends Fragment {
         if (videoUrl.isEmpty() && thumbnailUrl.isEmpty()) {
             simpleExoPlayerView.setVisibility(View.GONE);
         }
-
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(true);
+        }
     }
 
     @Override
@@ -178,6 +194,18 @@ public class DetailsFragment extends Fragment {
         super.onDestroy();
         player.stop();
         player.release();
+    }
+
+    /**
+     * Only called from test, creates and returns a new {@link SimpleIdlingResource}.
+     */
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
     }
 
     public interface OnFragmentInteractionListener {

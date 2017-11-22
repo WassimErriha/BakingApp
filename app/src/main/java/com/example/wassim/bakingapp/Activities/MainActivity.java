@@ -3,6 +3,10 @@ package com.example.wassim.bakingapp.Activities;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,6 +16,7 @@ import android.widget.Toast;
 import com.example.wassim.bakingapp.Adapters.RecipesAdapter;
 import com.example.wassim.bakingapp.Objects.Recipe;
 import com.example.wassim.bakingapp.R;
+import com.example.wassim.bakingapp.SimpleIdlingResource;
 import com.example.wassim.bakingapp.Utils.ConnectivityUtils;
 import com.example.wassim.bakingapp.Utils.JsonUtils;
 
@@ -19,14 +24,31 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    // The Idling Resource which will be null in production.
+    @Nullable
+    private static SimpleIdlingResource mIdlingResource;
     public GridView gridView;
     private Recipe recipe;
     private RecipesAdapter adapter;
+
+    /**
+     * Only called from test, creates and returns a new {@link SimpleIdlingResource}.
+     */
+    @VisibleForTesting
+    @NonNull
+    public static IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        getIdlingResource();
 
         if (savedInstanceState != null) {
             Toast.makeText(this, "saved recipe", Toast.LENGTH_LONG).show();
