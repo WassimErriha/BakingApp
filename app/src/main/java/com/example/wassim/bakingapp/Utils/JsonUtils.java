@@ -1,12 +1,15 @@
 package com.example.wassim.bakingapp.Utils;
 
 import android.net.Uri;
+
 import com.example.wassim.bakingapp.Objects.Ingredient;
 import com.example.wassim.bakingapp.Objects.Recipe;
 import com.example.wassim.bakingapp.Objects.Step;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -71,24 +74,24 @@ public class JsonUtils {
                 JSONObject recipe = root.getJSONObject(i);
                 String name = recipe.getString("name");
                 JSONArray ingredientsArray = recipe.getJSONArray("ingredients");
-                for (int ingredientIndex = 0 ; ingredientIndex < ingredientsArray.length() ; ingredientIndex++ ){
+                for (int ingredientIndex = 0; ingredientIndex < ingredientsArray.length(); ingredientIndex++) {
                     JSONObject ingredientObject = ingredientsArray.getJSONObject(ingredientIndex);
                     String quantity = ingredientObject.getString("quantity");
                     String measure = ingredientObject.getString("measure");
                     String ingredient = ingredientObject.getString("ingredient");
-                    ingredientArrayList.add( new Ingredient (quantity,measure,ingredient));
+                    ingredientArrayList.add(new Ingredient(quantity, measure, ingredient));
                 }
                 JSONArray stepsArray = recipe.getJSONArray("steps");
-                for (int stepIndex = 0 ; stepIndex < stepsArray.length() ; stepIndex++ ){
+                for (int stepIndex = 0; stepIndex < stepsArray.length(); stepIndex++) {
                     JSONObject stepObject = stepsArray.getJSONObject(stepIndex);
                     int stepId = stepObject.getInt("id");
                     String shortDescription = stepObject.getString("description");
                     String description = stepObject.getString("shortDescription");
                     String videoUrl = stepObject.getString("videoURL");
                     String thumbnailUrl = stepObject.getString("thumbnailURL");
-                    stepArrayList.add(new Step(stepId,shortDescription,description,videoUrl,thumbnailUrl));
+                    stepArrayList.add(new Step(stepId, shortDescription, description, videoUrl, thumbnailUrl));
                 }
-                recipeArrayList.add(new Recipe(name,ingredientArrayList,stepArrayList));
+                recipeArrayList.add(new Recipe(name, ingredientArrayList, stepArrayList));
             }
 
         } catch (JSONException e) {

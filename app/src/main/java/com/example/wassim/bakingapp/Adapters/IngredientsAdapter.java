@@ -6,8 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.example.wassim.bakingapp.Objects.Ingredient;
 import com.example.wassim.bakingapp.R;
+
 import java.util.ArrayList;
 
 /**
@@ -22,7 +24,6 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     public IngredientsAdapter(Context context, ArrayList<Ingredient> data) {
         mContext = context;
         ingredients = data;
-
     }
 
     @Override
@@ -36,10 +37,10 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
         Ingredient ingredient = ingredients.get(position);
         String qty = ingredient.getQuantity() + " ";
-        String measure = ingredient.getMeasure()+ " ";
+        String measure = ingredient.getMeasure() + " ";
         String singleIngredient = ingredient.getIngredient();
-        holder.measureTextView.setText((position +1) + ") " + qty + measure + singleIngredient );
-
+        String ingredientRowString = (position + 1) + ") " + qty + measure + singleIngredient;
+        holder.measureTextView.setText(ingredientRowString);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
 
         public ViewHolder(View itemView) {
             super(itemView);
-            measureTextView =  itemView.findViewById(R.id.id);
+            measureTextView = itemView.findViewById(R.id.id_ingredient_text_view);
         }
     }
 

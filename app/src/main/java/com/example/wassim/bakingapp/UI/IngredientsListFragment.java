@@ -25,7 +25,7 @@ public class IngredientsListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Recipe recipe = getActivity().getIntent().getExtras().getParcelable("recipe");
-        ArrayList<Ingredient>ingredients =  recipe.getmIngredientArrayList();
+        ArrayList<Ingredient> ingredients = recipe.getmIngredientArrayList();
         View rootView = inflater.inflate(R.layout.ingredient_item_list, container, false);
         // Set the adapter
         if (rootView instanceof RecyclerView) {

@@ -28,7 +28,7 @@
             android:launchMode="singleTop"
             android:parentActivityName=".Activities.MasterListActivity" />
 
-        <receiver android:name=".NewAppWidget">
+        <receiver android:name=".WidgetFiles.NewAppWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -39,11 +39,11 @@
         </receiver>
 
         <service
-            android:name=".WidgetRemoteViewService"
+            android:name=".WidgetFiles.WidgetRemoteViewService"
             android:enabled="true"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <activity android:name=".WidgetIngredientsActivity"></activity>
+        <activity android:name=".WidgetFiles.WidgetIngredientsActivity"></activity>
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.example.wassim.bakingapp;
+package com.example.wassim.bakingapp.WidgetFiles;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -7,14 +7,11 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.example.wassim.bakingapp.Objects.Recipe;
+import com.example.wassim.bakingapp.R;
 import com.example.wassim.bakingapp.Utils.JsonUtils;
 
 import java.util.ArrayList;
 
-/**
- * If you are familiar with Adapter of ListView,this is the same as adapter
- * with few changes
- */
 public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     private ArrayList<Recipe> mRecipes;
     private Context context = null;

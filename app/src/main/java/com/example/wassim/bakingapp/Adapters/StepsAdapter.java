@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.example.wassim.bakingapp.Objects.Step;
 import com.example.wassim.bakingapp.R;
 
@@ -15,18 +16,13 @@ import java.util.ArrayList;
  * Created by Wassim on 2017-11-07
  */
 
-public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder>  {
+public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> {
 
+    public OnStepInstructionClickListener onStepInstructionClickListener;
     private Context mContext;
     private ArrayList<Step> steps;
-    public OnStepInstructionClickListener onStepInstructionClickListener;
 
-
-    public interface OnStepInstructionClickListener {
-        void onStepClick(int stepId);
-    }
-
-    public StepsAdapter(Context context, ArrayList<Step> data, OnStepInstructionClickListener clickListener ) {
+    public StepsAdapter(Context context, ArrayList<Step> data, OnStepInstructionClickListener clickListener) {
         mContext = context;
         steps = data;
         onStepInstructionClickListener = clickListener;
@@ -51,24 +47,26 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
         return steps.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements  View.OnClickListener{
+    public interface OnStepInstructionClickListener {
+        void onStepClick(int stepId);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView stepTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
-            stepTextView =  itemView.findViewById(R.id.step_description);
+            stepTextView = itemView.findViewById(R.id.step_description);
         }
 
         @Override
         public void onClick(View view) {
             view.setBackgroundColor(mContext.getResources().getColor(R.color.cardview_dark_background));
-            int position = getAdapterPosition();
-            Step step = steps.get(position);
-            int stepId = step.getStepId();
-            // return step position instead of step id to avoid out of bound exception
+            // pass in step position instead of step id to avoid out of bound exception
             // the array may be missing a step.
+            int position = getAdapterPosition();
             onStepInstructionClickListener.onStepClick(position);
         }
     }

@@ -33,19 +33,19 @@ import com.squareup.picasso.Picasso;
 
 public class DetailsFragment extends Fragment {
 
+    private static final String TEST_THUMBNAIL_URL = "http://www.simplyrecipes.com/wp-content/uploads/2014/12/perfect-cheesecake-horiz-a-1200.jpg";
     private static String videoUrl;
+    private final int PREVIOUS_BUTTON_ID = 0;
+    private final int NEXT_BUTTON_ID = 1;
     private SimpleExoPlayerView simpleExoPlayerView;
     private SimpleExoPlayer player;
     private String thumbnailUrl;
     private String stepDescription;
     private OnFragmentInteractionListener onFragmentInteractionListener;
-    private int stepId;
+    private int stepPositionInDataSet;
     private Recipe recipe;
-    private Step step;
     private Button previousButton;
     private Button nextButton;
-    private ExtractorMediaSource mediaSource;
-    private Handler mainHandler;
 
 
     public DetailsFragment() {
@@ -61,69 +61,58 @@ public class DetailsFragment extends Fragment {
 
         if (getArguments() != null) {
             recipe = getArguments().getParcelable("recipe");
-            stepId = getArguments().getInt("step_id");
+            stepPositionInDataSet = getArguments().getInt("step_position");
         }
         // intent
         else {
             recipe = getActivity().getIntent().getExtras().getParcelable("recipe");
-            stepId = getActivity().getIntent().getExtras().getInt("step_id");
+            stepPositionInDataSet = getActivity().getIntent().getExtras().getInt("step_position");
         }
-        step = recipe.getmStepArrayList().get(stepId);
+        Step step = recipe.getmStepArrayList().get(stepPositionInDataSet);
         videoUrl = step.getVideoUrl();
         thumbnailUrl = step.getThumbnailUrl();
         stepDescription = step.getShortDiscription();
-
-
-        mainHandler = new Handler();
+        Handler mainHandler = new Handler();
         BandwidthMeter bandwidthMeter1 = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter1);
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getActivity(), Util.getUserAgent(getActivity(), "BakingApp"), new DefaultBandwidthMeter());
-        mediaSource = new ExtractorMediaSource(Uri.parse(videoUrl), dataSourceFactory, new DefaultExtractorsFactory(), mainHandler, null);
+        ExtractorMediaSource mediaSource = new ExtractorMediaSource(Uri.parse(videoUrl), dataSourceFactory, new DefaultExtractorsFactory(), mainHandler, null);
         player = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
         player.prepare(mediaSource);
         player.setPlayWhenReady(true);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_details, container, false);
-
         TextView stepInstructionsTextView = rootView.findViewById(R.id.step_instruction_text_view);
         stepInstructionsTextView.setText(stepDescription);
-
         simpleExoPlayerView = rootView.findViewById(R.id.exoplayer_view);
         simpleExoPlayerView.requestFocus();
         simpleExoPlayerView.setPlayer(player);
-
         nextButton = rootView.findViewById(R.id.next_recipe_button);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onFragmentInteractionListener.onNavigationButtonsInteraction(1, stepId);
+                onFragmentInteractionListener.onNavigationButtonsInteraction(NEXT_BUTTON_ID, stepPositionInDataSet);
             }
         });
-
         previousButton = rootView.findViewById(R.id.previous_recipe_button);
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onFragmentInteractionListener.onNavigationButtonsInteraction(0, stepId);
+                onFragmentInteractionListener.onNavigationButtonsInteraction(PREVIOUS_BUTTON_ID, stepPositionInDataSet);
             }
         });
-
-
         // this block is only for testing, the data provided does not contain any thumbnails
         if (!thumbnailUrl.isEmpty()) {
             ImageView exoPlayerThumbnail = rootView.findViewById(R.id.exo_thumbnail);
             Picasso.with(getActivity())
-                    .load("http://www.simplyrecipes.com/wp-content/uploads/2014/12/perfect-cheesecake-horiz-a-1200.jpg")
+                    .load(TEST_THUMBNAIL_URL)
                     .into(exoPlayerThumbnail);
             simpleExoPlayerView.setUseController(false);
-
         }
         return rootView;
     }
@@ -133,9 +122,9 @@ public class DetailsFragment extends Fragment {
         // get size of array to remove next button when user gets to the end of the array
         int endOfArray = (recipe.getmStepArrayList().size() - 1);
         super.onStart();
-        if (stepId == 0) {
+        if (stepPositionInDataSet == 0) {
             previousButton.setVisibility(View.GONE);
-        } else if (stepId == endOfArray) {
+        } else if (stepPositionInDataSet == endOfArray) {
             nextButton.setVisibility(View.GONE);
         }
         // if in tablet mode, remove navigation buttons

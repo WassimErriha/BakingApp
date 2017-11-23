@@ -15,6 +15,7 @@ import com.example.wassim.bakingapp.R;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,11 +24,9 @@ import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
-import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
@@ -40,9 +39,9 @@ public class MainActivityTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    private boolean twoPaneLayout = false;
 
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
+    private static Matcher<View> childAtPosition(final Matcher<View> parentMatcher, final int position) {
 
         return new TypeSafeMatcher<View>() {
             @Override
@@ -60,11 +59,15 @@ public class MainActivityTest {
         };
     }
 
+    @Before
+    public void setUp() throws Exception {
+        twoPaneLayout = MainActivity.isTablet();
+    }
+
     @Test
     public void mainActivityTest6() {
-
         // test for TwoPaneLayout
-        if (onView(allOf(withId(R.id.two_pane_activity_master_list))) != null) {
+        if (twoPaneLayout) {
             DataInteraction linearLayout = onData(anything())
                     .inAdapterView(allOf(withId(R.id.main_grid_view),
                             childAtPosition(
@@ -107,16 +110,6 @@ public class MainActivityTest {
 
             // test for hand held device
         } else {
-            ViewInteraction textView = onView(
-                    allOf(withId(R.id.step_description), withText("Brownies"),
-                            childAtPosition(
-                                    childAtPosition(
-                                            withId(R.id.cv),
-                                            0),
-                                    0),
-                            isDisplayed()));
-            textView.check(matches(withText("Brownies")));
-
             DataInteraction linearLayout = onData(anything())
                     .inAdapterView(allOf(withId(R.id.main_grid_view),
                             childAtPosition(
@@ -136,16 +129,6 @@ public class MainActivityTest {
                             isDisplayed()));
             cardView.perform(click());
 
-            ViewInteraction textView2 = onView(
-                    allOf(withId(R.id.id), withText("5) 5 TBLSP vanilla"),
-                            childAtPosition(
-                                    childAtPosition(
-                                            withId(R.id.list),
-                                            4),
-                                    0),
-                            isDisplayed()));
-            textView2.check(matches(withText("5) 5 TBLSP vanilla")));
-
             pressBack();
 
             ViewInteraction recyclerView = onView(
@@ -155,101 +138,137 @@ public class MainActivityTest {
                                     1)));
             recyclerView.perform(actionOnItemAtPosition(0, click()));
 
+
             ViewInteraction button = onView(
-                    allOf(withId(R.id.next_recipe_button), withText("next"),
+                    allOf(withId(R.id.next_recipe_button), withText("Next Recipe"),
                             childAtPosition(
                                     allOf(withId(R.id.navigation_layout),
                                             childAtPosition(
                                                     withId(R.id.fragment_details_id),
-                                                    2)),
+                                                    0)),
                                     1),
                             isDisplayed()));
             button.perform(click());
 
             ViewInteraction button2 = onView(
-                    allOf(withId(R.id.next_recipe_button), withText("next"),
+                    allOf(withId(R.id.next_recipe_button), withText("Next Recipe"),
                             childAtPosition(
                                     allOf(withId(R.id.navigation_layout),
                                             childAtPosition(
                                                     withId(R.id.fragment_details_id),
-                                                    2)),
+                                                    0)),
                                     1),
                             isDisplayed()));
             button2.perform(click());
 
             ViewInteraction button3 = onView(
-                    allOf(withId(R.id.next_recipe_button), withText("next"),
+                    allOf(withId(R.id.next_recipe_button), withText("Next Recipe"),
                             childAtPosition(
                                     allOf(withId(R.id.navigation_layout),
                                             childAtPosition(
                                                     withId(R.id.fragment_details_id),
-                                                    2)),
+                                                    0)),
                                     1),
                             isDisplayed()));
             button3.perform(click());
 
             ViewInteraction button4 = onView(
-                    allOf(withId(R.id.previous_recipe_button), withText("previous"),
+                    allOf(withId(R.id.previous_recipe_button), withText("Previous Recipe"),
                             childAtPosition(
                                     allOf(withId(R.id.navigation_layout),
                                             childAtPosition(
                                                     withId(R.id.fragment_details_id),
-                                                    2)),
+                                                    0)),
                                     0),
                             isDisplayed()));
             button4.perform(click());
 
+            pressBack();
+
+            ViewInteraction recyclerView2 = onView(
+                    allOf(withId(R.id.master_recycler_view),
+                            childAtPosition(
+                                    withId(R.id.recipe_detail_fragment),
+                                    1)));
+            recyclerView2.perform(actionOnItemAtPosition(3, click()));
+
             ViewInteraction button5 = onView(
-                    allOf(withId(R.id.previous_recipe_button), withText("previous"),
+                    allOf(withId(R.id.next_recipe_button), withText("Next Recipe"),
                             childAtPosition(
                                     allOf(withId(R.id.navigation_layout),
                                             childAtPosition(
                                                     withId(R.id.fragment_details_id),
-                                                    2)),
-                                    0),
+                                                    0)),
+                                    1),
                             isDisplayed()));
             button5.perform(click());
 
             ViewInteraction button6 = onView(
-                    allOf(withId(R.id.previous_recipe_button), withText("previous"),
+                    allOf(withId(R.id.next_recipe_button), withText("Next Recipe"),
                             childAtPosition(
                                     allOf(withId(R.id.navigation_layout),
                                             childAtPosition(
                                                     withId(R.id.fragment_details_id),
-                                                    2)),
-                                    0),
+                                                    0)),
+                                    1),
                             isDisplayed()));
             button6.perform(click());
 
-            ViewInteraction imageButton = onView(
-                    allOf(withId(R.id.exo_pause), withContentDescription("Pause"),
+            ViewInteraction button7 = onView(
+                    allOf(withId(R.id.next_recipe_button), withText("Next Recipe"),
                             childAtPosition(
-                                    childAtPosition(
-                                            withClassName(is("android.widget.LinearLayout")),
-                                            0),
+                                    allOf(withId(R.id.navigation_layout),
+                                            childAtPosition(
+                                                    withId(R.id.fragment_details_id),
+                                                    0)),
                                     1),
                             isDisplayed()));
-            imageButton.perform(click());
+            button7.perform(click());
 
-            ViewInteraction imageButton2 = onView(
-                    allOf(withId(R.id.exo_play), withContentDescription("Play"),
+            pressBack();
+
+            ViewInteraction recyclerView3 = onView(
+                    allOf(withId(R.id.master_recycler_view),
                             childAtPosition(
-                                    childAtPosition(
-                                            withClassName(is("android.widget.LinearLayout")),
-                                            0),
+                                    withId(R.id.recipe_detail_fragment),
+                                    1)));
+            recyclerView3.perform(actionOnItemAtPosition(6, click()));
+
+            ViewInteraction button8 = onView(
+                    allOf(withId(R.id.previous_recipe_button), withText("Previous Recipe"),
+                            childAtPosition(
+                                    allOf(withId(R.id.navigation_layout),
+                                            childAtPosition(
+                                                    withId(R.id.fragment_details_id),
+                                                    0)),
                                     0),
                             isDisplayed()));
-            imageButton2.perform(click());
+            button8.perform(click());
 
-            ViewInteraction imageButton3 = onView(
-                    allOf(withId(R.id.exo_pause), withContentDescription("Pause"),
+            ViewInteraction button9 = onView(
+                    allOf(withId(R.id.previous_recipe_button), withText("Previous Recipe"),
                             childAtPosition(
-                                    childAtPosition(
-                                            withClassName(is("android.widget.LinearLayout")),
-                                            0),
-                                    1),
+                                    allOf(withId(R.id.navigation_layout),
+                                            childAtPosition(
+                                                    withId(R.id.fragment_details_id),
+                                                    0)),
+                                    0),
                             isDisplayed()));
-            imageButton3.perform(click());
+            button9.perform(click());
+
+            ViewInteraction button10 = onView(
+                    allOf(withId(R.id.previous_recipe_button), withText("Previous Recipe"),
+                            childAtPosition(
+                                    allOf(withId(R.id.navigation_layout),
+                                            childAtPosition(
+                                                    withId(R.id.fragment_details_id),
+                                                    0)),
+                                    0),
+                            isDisplayed()));
+            button10.perform(click());
+
+            pressBack();
         }
     }
+
 }

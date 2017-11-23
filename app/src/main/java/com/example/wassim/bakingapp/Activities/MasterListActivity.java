@@ -5,7 +5,6 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
 import com.example.wassim.bakingapp.Objects.Recipe;
 import com.example.wassim.bakingapp.R;
@@ -15,27 +14,30 @@ import com.example.wassim.bakingapp.UI.MasterListFragment;
 
 public class MasterListActivity extends AppCompatActivity implements MasterListFragment.OnFragmentInteractionListener, DetailsFragment.OnFragmentInteractionListener {
 
+    private final String STEP_DETAILS_FRAGMENT_TAG = "step_details_tag";
+    private final String INGREDIENTS_LIST_FRAGMENT_TAG = "ingredients_list_tag";
+    private final String ACTION_SHOW_STEP_INSTRUCTIONS = "action_show_step_instruction";
+    private final String ACTION_SHOW_INGREDIENTS = "action_show_ingredients";
     boolean twoPaneLayout;
     private FragmentManager fragmentManager;
     private IngredientsListFragment ingredientListFragment;
     private FragmentTransaction fragmentTransaction;
     private Recipe recipe;
     private DetailsFragment detailsFragment;
-    private String INGREDIENTS_LIST_FRAGMENT_TAG = "ingredients_list_tag";
-    private String STEP_DETAILS_FRAGMENT_TAG = "step_details_tag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master_list);
 
+        recipe = getIntent().getExtras().getParcelable("recipe");
 
-        if (findViewById(R.id.two_pane_activity_master_list) != null) {
+        if (getResources().getBoolean(R.bool.isTablet)) {
             twoPaneLayout = true;
             fragmentManager = getFragmentManager();
+            // in case of activity restart, check if details Fragments are retained.
             ingredientListFragment = (IngredientsListFragment) fragmentManager.findFragmentByTag(INGREDIENTS_LIST_FRAGMENT_TAG);
             detailsFragment = (DetailsFragment) fragmentManager.findFragmentByTag(STEP_DETAILS_FRAGMENT_TAG);
-            // if ingredientListFragment && detailsFragment
             if (ingredientListFragment == null && detailsFragment == null) {
                 fragmentTransaction = fragmentManager.beginTransaction();
                 ingredientListFragment = new IngredientsListFragment();
@@ -47,10 +49,10 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
         }
     }
 
+    // get StepPositionInDataSet instead of stepId because a stepId might be missing
+    // this avoids causing a NPE when reaching the end of the array while using a navigation buttons
     @Override
-    public void onRecyclerViewInteraction(int stepId) {
-
-        if (getIntent() != null) recipe = getIntent().getExtras().getParcelable("recipe");
+    public void onRecyclerViewInteraction(int stepPositionInDataSet) {
 
         if (twoPaneLayout) {
             // show mediaPlayer and instructions fragment
@@ -59,22 +61,21 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
             fragmentTransaction.replace(R.id.item_details_container, detailsFragment, STEP_DETAILS_FRAGMENT_TAG);
             Bundle bundle = new Bundle();
             bundle.putParcelable("recipe", recipe);
-            bundle.putInt("step_id", stepId);
+            bundle.putInt("step_position", stepPositionInDataSet);
             detailsFragment.setArguments(bundle);
             fragmentTransaction.commit();
         } else {
             Intent intent = new Intent(this, DetailsActivity.class);
-            intent.setAction("ACTION_SHOW_STEP_INSTRUCTIONS");
+            intent.setAction(ACTION_SHOW_STEP_INSTRUCTIONS);
             intent.putExtra("recipe", recipe);
-            intent.putExtra("step_id", stepId);
+            intent.putExtra("step_position", stepPositionInDataSet);
             startActivity(intent);
-            Toast.makeText(this, "Test " + stepId, Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
     public void onIngredientCardInteraction() {
-        recipe = getIntent().getExtras().getParcelable("recipe");
+
         if (twoPaneLayout) {
             // show Ingredients fragment
             fragmentTransaction = fragmentManager.beginTransaction();
@@ -83,7 +84,7 @@ public class MasterListActivity extends AppCompatActivity implements MasterListF
             fragmentTransaction.commit();
         } else {
             Intent intent = new Intent(this, DetailsActivity.class);
-            intent.setAction("ACTION_SHOW_INGREDIENTS");
+            intent.setAction(ACTION_SHOW_INGREDIENTS);
             intent.putExtra("recipe", recipe);
             startActivity(intent);
         }

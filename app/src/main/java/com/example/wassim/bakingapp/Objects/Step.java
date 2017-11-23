@@ -9,6 +9,17 @@ import android.os.Parcelable;
 
 public class Step implements Parcelable {
 
+    public static final Creator<Step> CREATOR = new Creator<Step>() {
+        @Override
+        public Step createFromParcel(Parcel source) {
+            return new Step(source);
+        }
+
+        @Override
+        public Step[] newArray(int size) {
+            return new Step[size];
+        }
+    };
     int stepId;
     String shortDiscription;
     String description;
@@ -22,6 +33,14 @@ public class Step implements Parcelable {
         this.description = description;
         this.videoUrl = videoUrl;
         this.thumbnailUrl = thumbnailUrl;
+    }
+
+    protected Step(Parcel in) {
+        this.stepId = in.readInt();
+        this.shortDiscription = in.readString();
+        this.description = in.readString();
+        this.videoUrl = in.readString();
+        this.thumbnailUrl = in.readString();
     }
 
     public int getStepId() {
@@ -55,7 +74,6 @@ public class Step implements Parcelable {
                 '}';
     }
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -69,24 +87,4 @@ public class Step implements Parcelable {
         dest.writeString(this.videoUrl);
         dest.writeString(this.thumbnailUrl);
     }
-
-    protected Step(Parcel in) {
-        this.stepId = in.readInt();
-        this.shortDiscription = in.readString();
-        this.description = in.readString();
-        this.videoUrl = in.readString();
-        this.thumbnailUrl = in.readString();
-    }
-
-    public static final Creator<Step> CREATOR = new Creator<Step>() {
-        @Override
-        public Step createFromParcel(Parcel source) {
-            return new Step(source);
-        }
-
-        @Override
-        public Step[] newArray(int size) {
-            return new Step[size];
-        }
-    };
 }
