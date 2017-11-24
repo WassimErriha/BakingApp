@@ -37,13 +37,13 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_marginBottom="8dp"
+                android:layout_marginStart="84dp"
                 android:layout_marginTop="8dp"
                 android:background="@android:color/transparent"
                 android:textSize="30sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintVertical_bias="0.0"
                 tools:text="Recipe Name" />
         </android.support.constraint.ConstraintLayout>

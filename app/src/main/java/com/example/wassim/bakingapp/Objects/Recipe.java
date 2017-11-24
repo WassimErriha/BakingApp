@@ -24,13 +24,15 @@ Recipe implements Parcelable {
             return new Recipe[size];
         }
     };
+    int mRecipeId;
     String mName;
     String mImage;
     ArrayList<Ingredient> mIngredientArrayList;
     ArrayList<Step> mStepArrayList;
 
 
-    public Recipe(String name, String image, ArrayList<Ingredient> ingredientArrayList, ArrayList<Step> stepArrayList) {
+    public Recipe(int recipeId, String name, String image, ArrayList<Ingredient> ingredientArrayList, ArrayList<Step> stepArrayList) {
+        mRecipeId = recipeId;
         mName = name;
         mImage = image;
         mIngredientArrayList = ingredientArrayList;
@@ -39,6 +41,7 @@ Recipe implements Parcelable {
     }
 
     protected Recipe(Parcel in) {
+        this.mRecipeId = in.readInt();
         this.mName = in.readString();
         this.mImage = in.readString();
         this.mIngredientArrayList = new ArrayList<Ingredient>();
@@ -47,6 +50,9 @@ Recipe implements Parcelable {
         in.readList(this.mStepArrayList, Step.class.getClassLoader());
     }
 
+    public int getmRecipeId() {
+        return mRecipeId;
+    }
     public String getmName() {
         return mName;
     }
@@ -80,6 +86,7 @@ Recipe implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.mRecipeId);
         dest.writeString(this.mName);
         dest.writeString(this.mImage);
         dest.writeList(this.mIngredientArrayList);

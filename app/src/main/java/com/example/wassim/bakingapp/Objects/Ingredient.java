@@ -57,6 +57,10 @@ public class Ingredient implements Parcelable {
                 '}';
     }
 
+    public String getConcatenatedString() {
+        return quantity + " " + measure + " " + ingredient;
+    }
+
     @Override
     public int describeContents() {
         return 0;

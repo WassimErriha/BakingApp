@@ -1,6 +1,5 @@
 package com.example.wassim.bakingapp.WidgetFiles;
 
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
@@ -18,6 +17,7 @@ public class NewAppWidget extends AppWidgetProvider {
         for (int i = 0; i < N; ++i) {
             RemoteViews remoteViews = updateWidgetListView(context, appWidgetIds[i]);
             appWidgetManager.updateAppWidget(appWidgetIds[i], remoteViews);
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_view);
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
@@ -28,9 +28,6 @@ public class NewAppWidget extends AppWidgetProvider {
         svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         svcIntent.setData(Uri.parse(svcIntent.toUri(Intent.URI_INTENT_SCHEME)));
         remoteViews.setRemoteAdapter(R.id.widget_list_view, svcIntent);
-        Intent intent = new Intent(context, WidgetIngredientsActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        remoteViews.setPendingIntentTemplate(R.id.widget_list_view, pendingIntent);
         return remoteViews;
     }
 

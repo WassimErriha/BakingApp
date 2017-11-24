@@ -80,7 +80,7 @@ public class DetailsFragment extends Fragment {
         ExtractorMediaSource mediaSource = new ExtractorMediaSource(Uri.parse(videoUrl), dataSourceFactory, new DefaultExtractorsFactory(), mainHandler, null);
         player = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
         player.prepare(mediaSource);
-        player.setPlayWhenReady(true);
+
     }
 
     @Override
@@ -161,6 +161,13 @@ public class DetailsFragment extends Fragment {
         if (!getActivity().isChangingConfigurations()) {
             player.setPlayWhenReady(false);
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        // releasing Player in on stop freezes playback when navigating back to current activity
+        //player.release();
     }
 
     @Override

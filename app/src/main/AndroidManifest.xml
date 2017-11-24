@@ -43,7 +43,6 @@
             android:enabled="true"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <activity android:name=".WidgetFiles.WidgetIngredientsActivity"></activity>
     </application>
 
 </manifest>

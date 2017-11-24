@@ -1,11 +1,12 @@
 package com.example.wassim.bakingapp.WidgetFiles;
 
-import android.appwidget.AppWidgetManager;
 import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.example.wassim.bakingapp.Objects.Ingredient;
 import com.example.wassim.bakingapp.Objects.Recipe;
 import com.example.wassim.bakingapp.R;
 import com.example.wassim.bakingapp.Utils.JsonUtils;
@@ -13,14 +14,11 @@ import com.example.wassim.bakingapp.Utils.JsonUtils;
 import java.util.ArrayList;
 
 public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
-    private ArrayList<Recipe> mRecipes;
     private Context context = null;
-    private int appWidgetId;
+    private ArrayList<Ingredient> ingredientArrayList;
 
-    public ListProvider(Context context, Intent intent) {
+    public ListProvider(Context context) {
         this.context = context;
-        appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-                AppWidgetManager.INVALID_APPWIDGET_ID);
     }
 
     @Override
@@ -29,17 +27,14 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public int getCount() {
-        return mRecipes.size();
+        return ingredientArrayList.size();
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
         final RemoteViews remoteView = new RemoteViews(context.getPackageName(), R.layout.row);
-        Recipe recipe = mRecipes.get(position);
-        remoteView.setTextViewText(R.id.heading, recipe.getmName());
-        Intent intent = new Intent(context, WidgetIngredientsActivity.class);
-        intent.putExtra("recipe", recipe);
-        remoteView.setOnClickFillInIntent(R.id.widget_item, intent);
+        String ingredient = ingredientArrayList.get(position).getConcatenatedString();
+        remoteView.setTextViewText(R.id.heading, ingredient);
         return remoteView;
     }
 
@@ -47,7 +42,6 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     public long getItemId(int position) {
         return position;
     }
-    //Similar to getView of Adapter where instead of View we return RemoteViews
 
     @Override
     public RemoteViews getLoadingView() {
@@ -66,9 +60,18 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDataSetChanged() {
-        mRecipes = new ArrayList<>();
+        ArrayList<Recipe> mRecipes = new ArrayList<>();
         ArrayList<Recipe> recipes = JsonUtils.fetchRecipe();
         mRecipes.addAll(recipes);
+        int lastViewedRecipe = getLastClickedRecipe();
+        Recipe singleRecipe = mRecipes.get(lastViewedRecipe - 1);
+        ingredientArrayList = singleRecipe.getmIngredientArrayList();
+    }
+
+    public int getLastClickedRecipe() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        int recipeId = sharedPreferences.getInt("recipeId", 0);
+        return recipeId;
     }
 
     @Override
