@@ -5,10 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.wassim.bakingapp.Objects.Recipe;
 import com.example.wassim.bakingapp.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -47,9 +49,20 @@ public class RecipesAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(R.layout.recipe_item, parent, false);
         }
         TextView recipeNameTextView = convertView.findViewById(R.id.step_description);
+        ImageView recipeImageView = convertView.findViewById(R.id.recipe_image);
         Recipe recipe = mRecipeList.get(position);
         String recipeName = recipe.getmName();
         recipeNameTextView.setText(recipeName);
+        String imageUrl = recipe.getmImage();
+        loadImage(imageUrl, recipeImageView);
         return convertView;
+    }
+
+    private void loadImage(String imageUrl, ImageView recipeImageView) {
+        if (!imageUrl.isEmpty()) {
+            Picasso.with(mContext)
+                    .load(imageUrl)
+                    .into(recipeImageView);
+        }
     }
 }

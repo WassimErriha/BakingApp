@@ -73,6 +73,7 @@ public class JsonUtils {
                 ArrayList<Step> stepArrayList = new ArrayList<>();
                 JSONObject recipe = root.getJSONObject(i);
                 String name = recipe.getString("name");
+                String image = recipe.getString("image");
                 JSONArray ingredientsArray = recipe.getJSONArray("ingredients");
                 for (int ingredientIndex = 0; ingredientIndex < ingredientsArray.length(); ingredientIndex++) {
                     JSONObject ingredientObject = ingredientsArray.getJSONObject(ingredientIndex);
@@ -91,7 +92,7 @@ public class JsonUtils {
                     String thumbnailUrl = stepObject.getString("thumbnailURL");
                     stepArrayList.add(new Step(stepId, shortDescription, description, videoUrl, thumbnailUrl));
                 }
-                recipeArrayList.add(new Recipe(name, ingredientArrayList, stepArrayList));
+                recipeArrayList.add(new Recipe(name, image, ingredientArrayList, stepArrayList));
             }
 
         } catch (JSONException e) {

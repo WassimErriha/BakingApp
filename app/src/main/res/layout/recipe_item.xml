@@ -18,19 +18,33 @@
             android:layout_height="match_parent"
             android:background="#10000000">
 
+            <ImageView
+                android:id="@+id/recipe_image"
+                android:layout_width="60dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintEnd_toStartOf="@+id/step_description"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toTopOf="parent" />
+
             <TextView
                 android:id="@+id/step_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_marginBottom="8dp"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:background="@android:color/transparent"
                 android:textSize="30sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintVertical_bias="0.0"
                 tools:text="Recipe Name" />
         </android.support.constraint.ConstraintLayout>
 
