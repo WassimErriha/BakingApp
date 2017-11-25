@@ -9,6 +9,7 @@ import android.widget.RemoteViewsService;
 import com.example.wassim.bakingapp.Objects.Ingredient;
 import com.example.wassim.bakingapp.Objects.Recipe;
 import com.example.wassim.bakingapp.R;
+import com.example.wassim.bakingapp.Utils.ConnectivityUtils;
 import com.example.wassim.bakingapp.Utils.JsonUtils;
 
 import java.util.ArrayList;
@@ -27,7 +28,10 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public int getCount() {
-        return ingredientArrayList.size();
+        if (ingredientArrayList == null)
+            return 0;
+        else
+            return ingredientArrayList.size();
     }
 
     @Override
@@ -60,12 +64,18 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDataSetChanged() {
-        ArrayList<Recipe> mRecipes = new ArrayList<>();
-        ArrayList<Recipe> recipes = JsonUtils.fetchRecipe();
-        mRecipes.addAll(recipes);
-        int lastViewedRecipe = getLastClickedRecipe();
-        Recipe singleRecipe = mRecipes.get(lastViewedRecipe - 1);
-        ingredientArrayList = singleRecipe.getmIngredientArrayList();
+        if (ConnectivityUtils.isNetworkAvailable(context)) {
+            ArrayList<Recipe> mRecipes = new ArrayList<>();
+            try {
+                ArrayList<Recipe> recipes = JsonUtils.fetchRecipe();
+                mRecipes.addAll(recipes);
+                int lastViewedRecipe = getLastClickedRecipe();
+                Recipe singleRecipe = mRecipes.get(lastViewedRecipe - 1);
+                ingredientArrayList = singleRecipe.getmIngredientArrayList();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public int getLastClickedRecipe() {

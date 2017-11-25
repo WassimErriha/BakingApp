@@ -18,8 +18,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-
 public class JsonUtils {
+
+    public static final String RECIPES_URL =
+            "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
     private static URL buildUrl(String string) {
         Uri builtURL = Uri.parse(string).buildUpon().build();
@@ -33,7 +35,7 @@ public class JsonUtils {
     }
 
     private static String getResponseFromHttpUrl() throws IOException {
-        URL JSON_URL = buildUrl("https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json");
+        URL JSON_URL = buildUrl(RECIPES_URL);
         HttpURLConnection urlConnection = (HttpURLConnection) JSON_URL.openConnection();
         try {
             InputStream in = urlConnection.getInputStream();

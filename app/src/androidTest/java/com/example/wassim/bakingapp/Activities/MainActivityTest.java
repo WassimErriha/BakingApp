@@ -1,7 +1,6 @@
 package com.example.wassim.bakingapp.Activities;
 
 
-import android.support.test.espresso.DataInteraction;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -20,7 +19,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -30,7 +28,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.is;
 
 @LargeTest
@@ -68,20 +65,16 @@ public class MainActivityTest {
     public void mainActivityTest6() {
         // test for TwoPaneLayout
         if (twoPaneLayout) {
-            DataInteraction linearLayout = onData(anything())
-                    .inAdapterView(allOf(withId(R.id.main_grid_view),
-                            childAtPosition(
-                                    withClassName(is("android.widget.LinearLayout")),
-                                    0)))
-                    .atPosition(0);
-            linearLayout.perform(click());
+            ViewInteraction recyclerView = onView(allOf(withId(R.id.main_recycler_view),
+                    childAtPosition(withClassName(is("android.widget.LinearLayout")), 0)));
+            recyclerView.perform(actionOnItemAtPosition(0, click()));
 
-            ViewInteraction recyclerView = onView(
+            ViewInteraction recyclerView1 = onView(
                     allOf(withId(R.id.master_recycler_view),
                             childAtPosition(
                                     withId(R.id.recipe_detail_fragment),
                                     1)));
-            recyclerView.perform(actionOnItemAtPosition(0, click()));
+            recyclerView1.perform(actionOnItemAtPosition(0, click()));
 
             ViewInteraction recyclerView2 = onView(
                     allOf(withId(R.id.master_recycler_view),
@@ -110,13 +103,9 @@ public class MainActivityTest {
 
             // test for hand held device
         } else {
-            DataInteraction linearLayout = onData(anything())
-                    .inAdapterView(allOf(withId(R.id.main_grid_view),
-                            childAtPosition(
-                                    withClassName(is("android.widget.LinearLayout")),
-                                    0)))
-                    .atPosition(0);
-            linearLayout.perform(click());
+            ViewInteraction recyclerView = onView(allOf(withId(R.id.main_recycler_view),
+                    childAtPosition(withClassName(is("android.widget.LinearLayout")), 0)));
+            recyclerView.perform(actionOnItemAtPosition(0, click()));
 
             ViewInteraction cardView = onView(
                     allOf(withId(R.id.ingredients_card),
@@ -131,12 +120,12 @@ public class MainActivityTest {
 
             pressBack();
 
-            ViewInteraction recyclerView = onView(
+            ViewInteraction recyclerView1 = onView(
                     allOf(withId(R.id.master_recycler_view),
                             childAtPosition(
                                     withId(R.id.recipe_detail_fragment),
                                     1)));
-            recyclerView.perform(actionOnItemAtPosition(0, click()));
+            recyclerView1.perform(actionOnItemAtPosition(0, click()));
 
 
             ViewInteraction button = onView(

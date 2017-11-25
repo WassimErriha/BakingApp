@@ -1,33 +1,35 @@
 package com.example.wassim.bakingapp.Activities;
 
-import android.annotation.SuppressLint;
+import android.app.LoaderManager;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
-import com.example.wassim.bakingapp.Adapters.RecipesAdapter;
+import com.example.wassim.bakingapp.Adapters.RecipeRecyclerViewAdapter;
 import com.example.wassim.bakingapp.Objects.Recipe;
 import com.example.wassim.bakingapp.R;
+import com.example.wassim.bakingapp.RecipesLoader;
 import com.example.wassim.bakingapp.Utils.ConnectivityUtils;
-import com.example.wassim.bakingapp.Utils.JsonUtils;
 import com.example.wassim.bakingapp.WidgetFiles.NewAppWidget;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements RecipeRecyclerViewAdapter.OnRecipeClickListener, LoaderManager.LoaderCallbacks<ArrayList<Recipe>> {
 
+    private static final int RECIPE_LOADER_ID = 1;
     private static boolean isTablet;
-    public GridView gridView;
-    private Recipe recipe;
+    public RecyclerView recyclerView;
+    private Recipe currentSelectedRecipe;
+    private RecipeRecyclerViewAdapter adapter;
 
     public static boolean isTablet() {
         return isTablet;
@@ -41,17 +43,12 @@ public class MainActivity extends AppCompatActivity {
         isTablet = getResources().getBoolean(R.bool.isTablet);
 
         if (ConnectivityUtils.isNetworkAvailable(this)) {
-            gridView = findViewById(R.id.main_grid_view);
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    recipe = (Recipe) adapterView.getAdapter().getItem(position);
-                    Intent intent = new Intent(MainActivity.this, MasterListActivity.class);
-                    intent.putExtra("recipe", recipe);
-                    startActivity(intent);
-                }
-            });
-            new GetRecipes().execute();
+            recyclerView = findViewById(R.id.main_recycler_view);
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+            recyclerView.setHasFixedSize(true);
+            adapter = new RecipeRecyclerViewAdapter(this, new ArrayList<Recipe>(), this);
+            recyclerView.setAdapter(adapter);
+            getLoaderManager().initLoader(RECIPE_LOADER_ID, null, MainActivity.this).forceLoad();
         } else {
             Toast.makeText(this, "No internet connection", Toast.LENGTH_LONG).show();
         }
@@ -61,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
+        if (!ConnectivityUtils.isNetworkAvailable(this))
+            return;
         setLastClickedRecipe();
         Intent intent = new Intent(this, NewAppWidget.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
@@ -72,26 +71,35 @@ public class MainActivity extends AppCompatActivity {
 
     public void setLastClickedRecipe() {
         int recipeId = 1;
-        if (recipe != null)
-            recipeId = recipe.getmRecipeId();
+        if (currentSelectedRecipe != null)
+            recipeId = currentSelectedRecipe.getmRecipeId();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.edit()
                 .putInt("recipeId", recipeId)
                 .apply();
     }
 
-    @SuppressLint("StaticFieldLeak")
-    class GetRecipes extends AsyncTask<Void, Void, ArrayList<Recipe>> {
+    @Override
+    public void onRecipeClick(int position, Recipe recipe) {
+        currentSelectedRecipe = recipe;
+        Intent intent = new Intent(MainActivity.this, MasterListActivity.class);
+        intent.putExtra("recipe", recipe);
+        startActivity(intent);
+    }
 
-        @Override
-        protected ArrayList<Recipe> doInBackground(Void... voids) {
-            return JsonUtils.fetchRecipe();
-        }
+    @Override
+    public Loader<ArrayList<Recipe>> onCreateLoader(int i, Bundle bundle) {
+        return new RecipesLoader(this);
+    }
 
-        @Override
-        protected void onPostExecute(ArrayList<Recipe> recipes) {
-            RecipesAdapter adapter = new RecipesAdapter(MainActivity.this, recipes);
-            gridView.setAdapter(adapter);
+    @Override
+    public void onLoadFinished(Loader<ArrayList<Recipe>> loader, ArrayList<Recipe> recipes) {
+        if (recipes != null && loader.getId() == RECIPE_LOADER_ID) {
+            adapter.swapData(recipes);
         }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ArrayList<Recipe>> loader) {
     }
 }
