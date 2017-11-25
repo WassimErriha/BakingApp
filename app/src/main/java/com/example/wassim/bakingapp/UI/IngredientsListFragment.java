@@ -18,9 +18,6 @@ import java.util.ArrayList;
 
 public class IngredientsListFragment extends Fragment {
 
-    public IngredientsListFragment() {
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

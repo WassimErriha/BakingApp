@@ -138,7 +138,6 @@ public class DetailsFragment extends Fragment {
                 onFragmentInteractionListener.onNavigationButtonsInteraction(PREVIOUS_BUTTON_ID, stepPositionInDataSet);
             }
         });
-        // this block is only for testing, the data provided does not contain any thumbnails
         if (!TextUtils.isEmpty(thumbnailUrl)) {
             ImageView exoPlayerThumbnail = rootView.findViewById(R.id.exo_thumbnail);
             Picasso.with(getActivity())

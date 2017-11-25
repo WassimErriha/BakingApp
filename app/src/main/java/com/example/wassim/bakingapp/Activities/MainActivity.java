@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (ConnectivityUtils.isNetworkAvailable(this)) {
             gridView = findViewById(R.id.main_grid_view);
-            new GetRecipes().execute();
             gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -52,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-
+            new GetRecipes().execute();
         } else {
             Toast.makeText(this, "No internet connection", Toast.LENGTH_LONG).show();
         }
