@@ -60,8 +60,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
+
         setLastClickedRecipe();
         Intent intent = new Intent(this, NewAppWidget.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
@@ -69,12 +70,6 @@ public class MainActivity extends AppCompatActivity {
         int[] ids = appWidgetManager.getAppWidgetIds(new ComponentName(getApplication(), NewAppWidget.class));
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         sendBroadcast(intent);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
     }
 
     @SuppressLint("ApplySharedPref")

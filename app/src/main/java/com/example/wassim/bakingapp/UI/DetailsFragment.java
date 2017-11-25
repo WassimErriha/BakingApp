@@ -4,7 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +12,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.wassim.bakingapp.Activities.MainActivity;
 import com.example.wassim.bakingapp.Objects.Recipe;
 import com.example.wassim.bakingapp.Objects.Step;
 import com.example.wassim.bakingapp.R;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -33,7 +36,11 @@ import com.squareup.picasso.Picasso;
 
 public class DetailsFragment extends Fragment {
 
-    private static final String TEST_THUMBNAIL_URL = "http://www.simplyrecipes.com/wp-content/uploads/2014/12/perfect-cheesecake-horiz-a-1200.jpg";
+    private static final String TEST_THUMBNAIL_URL =
+            "http://www.simplyrecipes.com/wp-content/uploads/2014/12/perfect-cheesecake-horiz-a-1200.jpg";
+    private static final String RECIPE_KEY = "recipe";
+    private static final String STEP_POSITION_KEY = "step_position";
+    private static final String CONTENT_POSITION_KEY = "content_position";
     private static String videoUrl;
     private final int PREVIOUS_BUTTON_ID = 0;
     private final int NEXT_BUTTON_ID = 1;
@@ -46,7 +53,7 @@ public class DetailsFragment extends Fragment {
     private Recipe recipe;
     private Button previousButton;
     private Button nextButton;
-
+    private long contentPosition;
 
     public DetailsFragment() {
         // Required empty public constructor
@@ -56,31 +63,59 @@ public class DetailsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // keeps from having this fragment recreated after a configuration change
-        setRetainInstance(true);
+        //setRetainInstance(true);
 
-        if (getArguments() != null) {
-            recipe = getArguments().getParcelable("recipe");
-            stepPositionInDataSet = getArguments().getInt("step_position");
+
+        if (savedInstanceState != null) {
+            recipe = savedInstanceState.getParcelable(RECIPE_KEY);
+            stepPositionInDataSet = savedInstanceState.getInt(STEP_POSITION_KEY);
+            contentPosition = savedInstanceState.getLong(CONTENT_POSITION_KEY);
         }
-        // intent
+        // Activity arguments
+        else if (getArguments() != null) {
+            recipe = getArguments().getParcelable(RECIPE_KEY);
+            stepPositionInDataSet = getArguments().getInt(STEP_POSITION_KEY);
+        }
+        // Activity intent
         else {
-            recipe = getActivity().getIntent().getExtras().getParcelable("recipe");
-            stepPositionInDataSet = getActivity().getIntent().getExtras().getInt("step_position");
+            recipe = getActivity().getIntent().getExtras().getParcelable(RECIPE_KEY);
+            stepPositionInDataSet = getActivity().getIntent().getExtras().getInt(STEP_POSITION_KEY);
         }
         Step step = recipe.getmStepArrayList().get(stepPositionInDataSet);
         videoUrl = step.getVideoUrl();
         thumbnailUrl = step.getThumbnailUrl();
         stepDescription = step.getShortDiscription();
-        Handler mainHandler = new Handler();
-        BandwidthMeter bandwidthMeter1 = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter1);
-        TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getActivity(), Util.getUserAgent(getActivity(), "BakingApp"), new DefaultBandwidthMeter());
-        ExtractorMediaSource mediaSource = new ExtractorMediaSource(Uri.parse(videoUrl), dataSourceFactory, new DefaultExtractorsFactory(), mainHandler, null);
-        player = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
-        player.prepare(mediaSource);
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(RECIPE_KEY, recipe);
+        outState.putInt(STEP_POSITION_KEY, stepPositionInDataSet);
+        outState.putLong(CONTENT_POSITION_KEY, player.getContentPosition());
+    }
+
+    private void initializePlayer(SimpleExoPlayerView simpleExoPlayerView) {
+        BandwidthMeter bandwidthMeter =
+                new DefaultBandwidthMeter();
+        TrackSelection.Factory videoTrackSelectionFactory =
+                new AdaptiveTrackSelection.Factory(bandwidthMeter);
+        TrackSelector trackSelector =
+                new DefaultTrackSelector(videoTrackSelectionFactory);
+        player = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
+        simpleExoPlayerView.requestFocus();
+        simpleExoPlayerView.setPlayer(player);
+        DataSource.Factory dataSourceFactory =
+                new DefaultDataSourceFactory(getActivity(), Util.getUserAgent(getActivity(), "BakingApp"));
+        ExtractorsFactory extractorsFactory =
+                new DefaultExtractorsFactory();
+        String contentUrl = videoUrl;
+        MediaSource contentMediaSource =
+                new ExtractorMediaSource(Uri.parse(contentUrl), dataSourceFactory, extractorsFactory, null, null);
+        player.seekTo(contentPosition);
+        player.prepare(contentMediaSource);
+        player.setPlayWhenReady(true);
     }
 
     @Override
@@ -90,8 +125,7 @@ public class DetailsFragment extends Fragment {
         TextView stepInstructionsTextView = rootView.findViewById(R.id.step_instruction_text_view);
         stepInstructionsTextView.setText(stepDescription);
         simpleExoPlayerView = rootView.findViewById(R.id.exoplayer_view);
-        simpleExoPlayerView.requestFocus();
-        simpleExoPlayerView.setPlayer(player);
+        initializePlayer(simpleExoPlayerView);
         nextButton = rootView.findViewById(R.id.next_recipe_button);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,34 +141,33 @@ public class DetailsFragment extends Fragment {
             }
         });
         // this block is only for testing, the data provided does not contain any thumbnails
-        if (!thumbnailUrl.isEmpty()) {
+        if (!TextUtils.isEmpty(thumbnailUrl)) {
             ImageView exoPlayerThumbnail = rootView.findViewById(R.id.exo_thumbnail);
             Picasso.with(getActivity())
                     .load(TEST_THUMBNAIL_URL)
                     .into(exoPlayerThumbnail);
             simpleExoPlayerView.setUseController(false);
+
         }
         return rootView;
     }
 
     @Override
     public void onStart() {
+        super.onStart();
+
         // get size of array to remove next button when user gets to the end of the array
         int endOfArray = (recipe.getmStepArrayList().size() - 1);
-        super.onStart();
-        if (stepPositionInDataSet == 0) {
-            previousButton.setVisibility(View.GONE);
-        } else if (stepPositionInDataSet == endOfArray) {
-            nextButton.setVisibility(View.GONE);
-        }
         // if in tablet mode, remove navigation buttons
-        if (getActivity().findViewById(R.id.two_pane_activity_master_list) != null) {
+        if (MainActivity.isTablet()) {
             previousButton.setVisibility(View.GONE);
             nextButton.setVisibility(View.GONE);
-        }
-        if (videoUrl.isEmpty() && thumbnailUrl.isEmpty()) {
+        } else if (stepPositionInDataSet == 0)
+            previousButton.setVisibility(View.GONE);
+        else if (stepPositionInDataSet == endOfArray)
+            nextButton.setVisibility(View.GONE);
+        else if (videoUrl.isEmpty() && thumbnailUrl.isEmpty())
             simpleExoPlayerView.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -155,26 +188,22 @@ public class DetailsFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        // do not pause player after configuration change
-        if (!getActivity().isChangingConfigurations()) {
-            player.setPlayWhenReady(false);
+    public void onResume() {
+        super.onResume();
+        if (player == null) {
+            initializePlayer(simpleExoPlayerView);
         }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        // releasing Player in on stop freezes playback when navigating back to current activity
-        //player.release();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        player.stop();
-        player.release();
+        if (player != null) {
+            contentPosition = player.getContentPosition();
+            player.stop();
+            player.release();
+            player = null;
+        }
     }
 
     public interface OnFragmentInteractionListener {
