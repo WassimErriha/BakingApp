@@ -40,10 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
         isTablet = getResources().getBoolean(R.bool.isTablet);
 
-        new GetRecipes().execute();
-
         if (ConnectivityUtils.isNetworkAvailable(this)) {
             gridView = findViewById(R.id.main_grid_view);
+            new GetRecipes().execute();
             gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -72,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         sendBroadcast(intent);
     }
 
-    @SuppressLint("ApplySharedPref")
     public void setLastClickedRecipe() {
         int recipeId = 1;
         if (recipe != null)

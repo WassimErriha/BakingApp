@@ -36,8 +36,6 @@ import com.squareup.picasso.Picasso;
 
 public class DetailsFragment extends Fragment {
 
-    private static final String TEST_THUMBNAIL_URL =
-            "http://www.simplyrecipes.com/wp-content/uploads/2014/12/perfect-cheesecake-horiz-a-1200.jpg";
     private static final String RECIPE_KEY = "recipe";
     private static final String STEP_POSITION_KEY = "step_position";
     private static final String CONTENT_POSITION_KEY = "content_position";
@@ -144,10 +142,9 @@ public class DetailsFragment extends Fragment {
         if (!TextUtils.isEmpty(thumbnailUrl)) {
             ImageView exoPlayerThumbnail = rootView.findViewById(R.id.exo_thumbnail);
             Picasso.with(getActivity())
-                    .load(TEST_THUMBNAIL_URL)
+                    .load(thumbnailUrl)
                     .into(exoPlayerThumbnail);
             simpleExoPlayerView.setUseController(false);
-
         }
         return rootView;
     }
